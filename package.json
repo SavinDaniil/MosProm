@@ -1,0 +1,21 @@
+{
+  "name": "smena-ochakovo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "test": "node --experimental-strip-types --test tests/rules.test.ts",
+    "test:browser": "node scripts/browser-qa.mjs",
+    "test:performance": "node scripts/performance.mjs"
+  },
+  "devDependencies": {
+    "@playwright/cli": "0.1.22",
+    "playwright": "1.64.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  },
+  "packageManager": "pnpm@11.25.0"
+}
