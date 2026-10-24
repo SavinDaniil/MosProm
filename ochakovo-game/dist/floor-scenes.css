@@ -1,0 +1,385 @@
+/* Warm illustrated workspaces, composed like a point-and-click adventure. */
+body.floor-active{background:#e9e1d2;color:#263637}
+.floor-active .sidebar,.floor-active #companion-host,.floor-active .task-topline,.floor-active #main>.back-link,.floor-active .profession-after,.floor-active .station-actions{display:none!important}
+.floor-active .app-layout{display:block;max-width:none;padding:0}
+.floor-active #main{max-width:1600px;padding:18px 24px 22px;margin:auto;width:100%;min-width:0}
+.floor-active .topbar{background:#fffaf0;border-color:#d9d0bc;height:66px;min-height:66px;padding:0 28px;box-shadow:none}
+.floor-active .mission-layout{display:block;max-width:none;margin:0}
+.floor-active .mission-stage{padding:0!important;background:transparent;border:0;box-shadow:none;overflow:visible;min-height:0}
+.floor-active .shift{padding:0!important;background:transparent;max-width:none;border:0}
+.floor-active .shift-heading,.floor-active .shift-profession,.floor-active .shift-feedback,.floor-active .shift-phases,.floor-active .shift-lesson,.floor-active .shift-simulation{display:none!important}
+.floor-active .shift-content{margin:0;padding:0;max-width:none}
+.floor-game{--ink:#23363a;--red:#ca3538;--paper:#fff3d9;--teal:#5b8b87;font-family:Manrope,Arial,sans-serif;background:var(--paper);border:1px solid #c9baa1;border-radius:14px;overflow:hidden;box-shadow:0 9px 28px #41332318;color:var(--ink);isolation:isolate}
+.floor-game *{box-sizing:border-box}
+.floor-game button,.floor-game a{-webkit-tap-highlight-color:transparent}
+.floor-game button:focus-visible,.floor-game a:focus-visible{outline:3px solid #cb3037;outline-offset:4px}
+.floor-game svg{flex-shrink:0}
+.floor-room{position:relative;height:clamp(410px,57vh,670px);min-height:410px;background:#b7c5b2;isolation:isolate}
+.floor-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;z-index:-2}
+.floor-room:after{content:"";position:absolute;inset:0;background:linear-gradient(#fff3d940,transparent 24%,transparent 80%,#6043211c);pointer-events:none;z-index:-1}
+.floor-hud{position:absolute;left:0;top:0;width:100%;display:flex;align-items:flex-start;justify-content:space-between;padding:19px 25px;gap:16px;z-index:12;pointer-events:none}
+.floor-location{display:flex;align-items:flex-start;gap:12px;padding:9px 24px 15px 0;background:linear-gradient(100deg,#fff2dbeF 75%,#fff2db00);border-radius:0 0 28px 0}
+.floor-red-square{display:block;width:20px;height:20px;border-radius:3px;background:var(--red);margin-top:4px;box-shadow:inset 0 0 0 1px #891b2333}
+.floor-location h2{font-size:25px;line-height:1.15;margin:0;font-weight:850;letter-spacing:-.6px}
+.floor-location p{font-size:15px;line-height:1.4;margin:5px 0 0;font-weight:700;color:#576568}
+.floor-tools{pointer-events:auto;display:flex;align-items:center;gap:12px;background:#fff1dbea;border-radius:30px;padding:0 6px;min-height:44px}
+.floor-button{font:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border:1.5px solid #8f9789;border-radius:8px;background:#fffaed;color:var(--ink);font-size:13px;font-weight:800;line-height:1.4;cursor:pointer;text-align:center;box-shadow:0 2px 0 #6655381b;transition:background .15s,transform .15s}
+.floor-button:hover:not(:disabled){background:#fff;transform:translateY(-1px)}
+.floor-button:disabled{cursor:default;opacity:.5;box-shadow:none}
+.floor-button svg{width:20px;height:20px}
+.floor-button.is-primary{background:var(--red);color:#fff9ed;border-color:#a72b30;box-shadow:0 3px 0 #a42d31}
+.floor-button.is-primary:hover:not(:disabled){background:#b62b32}
+.floor-button.is-text{background:none;border:0;box-shadow:none;padding:8px 10px;color:var(--ink)}
+.floor-button.is-paper{background:#fff1d3;border-color:#9b8c70}
+.floor-button.is-checked{background:#e2eddb;border-color:#6a8c69;color:#325c46}
+.floor-pause{border-left:1px solid #9e957f!important;border-radius:0!important;min-width:44px}
+.floor-clipboard{position:absolute;right:2.4%;top:24%;width:18%;max-width:250px;min-width:184px;padding:23px 16px 15px;background:#fff2d6;color:#273a3e;border:1.5px solid #796d59;box-shadow:4px 6px 0 #75614335;transform:rotate(2deg);z-index:2}
+.floor-pin{position:absolute;top:8px;left:48%;width:12px;height:12px;border-radius:50%;background:#648d9b;border:1px solid #3d6472;box-shadow:1px 2px 2px #343e4540}
+.floor-clipboard h3{font-size:19px;line-height:1.25;letter-spacing:-.4px;margin:6px 0 15px;font-weight:850}
+.floor-clipboard dl{margin:0;border:1px solid #ab9d82}
+.floor-clipboard dl>div{display:grid;grid-template-columns:1fr 1.05fr;border-bottom:1px solid #ab9d82}
+.floor-clipboard dl>div:last-child{border:0}
+.floor-clipboard dt,.floor-clipboard dd{font-size:12px;margin:0;padding:9px 5px;font-weight:650}
+.floor-clipboard dd{border-left:1px solid #ab9d82;font-weight:850}
+.floor-clipboard p{font-size:12px;line-height:1.5;margin:10px 0}
+.floor-clipboard b{font-weight:850}
+.floor-paper-note{font-size:10px;line-height:1.5;display:block;margin-top:14px;color:#6f776f}
+.floor-clipboard hr{height:1px;border:0;background:#ac9d81}
+.floor-products{position:absolute;left:29%;right:23%;bottom:6%;display:flex;align-items:flex-end;justify-content:center;gap:22px;z-index:3}
+.floor-object{border:0;padding:0;background:none;color:var(--ink);cursor:pointer;font:inherit;position:relative;min-width:0;text-align:center;border-radius:16px}
+.floor-object:hover .floor-bottle-art,.floor-object:hover .floor-carton-art{filter:drop-shadow(0 0 5px #ffedc2) drop-shadow(0 0 1px #c43639);transform:translateY(-5px)}
+.floor-bottle-art{height:190px;width:80px;overflow:visible;transition:transform .2s,filter .2s;display:block;margin:auto}
+.floor-object-tag{position:relative;display:flex;justify-content:center;align-items:center;gap:5px;white-space:nowrap;padding:5px 10px;min-height:30px;background:#fff8e8;border:1.5px solid #977b56;border-radius:7px;box-shadow:0 3px 0 #5a4e3c22;font-size:12px;font-weight:850}
+.floor-object-tag svg{width:16px;height:16px}
+.floor-object small{display:block;line-height:1.4;font-size:11px;min-height:16px;font-weight:800;margin-top:5px;background:#fff4d7d9;border-radius:4px;padding:2px 4px}
+.floor-object.is-resolved .floor-object-tag,.floor-object.is-picked .floor-object-tag{background:#dae9d1;border-color:#547c62;color:#31583d}
+.floor-object.is-resolved .floor-bottle-art{opacity:.65}
+.floor-object.is-selected .floor-object-tag{border-color:var(--red);box-shadow:0 0 0 2px #fff4d5}
+.floor-samples{gap:45px;bottom:3%}
+.floor-samples .floor-bottle-art{height:230px;width:100px}
+.floor-scene-count{position:absolute;bottom:14px;left:22px;padding:7px 12px;background:#fff3dceF;border:1px solid #cdbb97;border-radius:7px;font-size:12px;font-weight:800;z-index:4}
+.floor-inspector{position:absolute;left:27%;top:18%;width:46%;max-width:570px;background:#fff5df;border:2px solid #776f5e;border-radius:12px;padding:18px 20px;box-shadow:0 12px 30px #2d3f3a40;z-index:20}
+.floor-inspector header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #d6c8ad}
+.floor-inspector header small{font-size:11px;font-weight:700;color:#63726c}
+.floor-inspector h3{font-size:21px;line-height:1.25;letter-spacing:-.5px;margin:4px 0 0;font-weight:850}
+.floor-inspector h3 span{font-size:13px;display:block;margin-top:4px;font-weight:600}
+.floor-close{border:0!important;background:transparent!important;box-shadow:none!important;font-size:25px;padding:0!important;min-width:35px;min-height:35px;flex-shrink:0}
+.floor-label-layout{display:grid;grid-template-columns:100px 1fr;gap:20px;align-items:center;padding:15px 0}
+.floor-label-bottle .floor-bottle-art{height:188px}
+.floor-label-fields{display:grid;gap:6px}
+.floor-label-fields .floor-button{display:grid;grid-template-columns:1fr auto;text-align:left;justify-content:stretch;padding:7px 10px;gap:1px 10px}
+.floor-label-fields small{font-size:10px;line-height:1.3;color:#65736c;grid-column:1}
+.floor-label-fields strong{font-size:14px;line-height:1.5;grid-column:1;font-weight:850}
+.floor-label-fields span{grid-column:2;grid-row:1/3;font-size:10px;color:#a43b36;align-self:center}
+.floor-label-fields .is-checked span{color:#3e6a4b}
+.floor-sample-panel>.floor-button,.floor-carton-panel>.floor-button{width:100%}
+.floor-inspection-body{display:flex;align-items:center;justify-content:center;gap:45px;padding:10px 0}
+.floor-large-bottle{position:relative}
+.floor-large-bottle .floor-bottle-art{height:210px;width:90px}
+.floor-level-guide{position:absolute;left:-12px;right:-15px;top:39%;border-top:2px dashed #b34539;opacity:.75}
+.floor-lenses{display:grid;gap:7px}
+.floor-lenses .floor-button{justify-content:flex-start;min-width:150px}
+.floor-lenses small{font-size:10px;line-height:1.6;color:#63736b}
+.floor-decision-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.floor-route-hotspots{position:absolute;inset:0;z-index:3}
+.floor-node{position:absolute;left:var(--x);top:47%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;cursor:pointer;font:inherit;color:var(--ink);padding:0}
+.floor-node span{display:grid;place-items:center;width:39px;height:39px;border-radius:50%;background:#fff6df;border:2px solid #c53939;font-size:18px;font-weight:850;box-shadow:0 0 0 6px #fff1c766}
+.floor-node strong{background:#fff2d9;border:1px solid #948268;padding:7px 10px;border-radius:5px;font-size:12px;box-shadow:0 3px 0 #725c3533}
+.floor-node:hover span{background:#fadfc0}
+.floor-node.is-done span{background:#d6e8cc;border-color:#527957;color:#3a6545}
+.floor-route-strip{position:absolute;left:26%;right:23%;bottom:12%;padding:15px;background:#fff4ddeb;border:1px solid #b8a789;border-radius:8px;font-size:13px;line-height:1.5;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.floor-route-strip span{font-weight:800}
+.floor-route-strip i{font-style:normal;color:#7d8f7f}
+.floor-incident{position:absolute;left:29%;right:25%;top:24%;bottom:4%;display:flex;align-items:center;gap:25px;padding-top:35px}
+.floor-incident-label{position:absolute;top:0;left:0;background:#fff1d9;padding:8px 13px;border:1px solid #a98d68;border-radius:5px;color:#a23133;font-size:13px;font-weight:850}
+.floor-repeat-bottles{display:flex;align-items:flex-end;flex-shrink:0;gap:3px}
+.floor-repeat-bottles .floor-bottle-art{height:200px;width:70px}
+.floor-incident-controls{display:grid;gap:8px;min-width:190px}
+.floor-incident-controls .is-text{font-size:11px;background:#fff1dddb;padding:6px;min-height:34px}
+.floor-team-card{position:absolute;left:28%;right:24%;top:20%;background:#fff3dceF;border:1.5px solid #8f8069;border-radius:10px;padding:20px;box-shadow:4px 7px 0 #6f69492b;z-index:4}
+.floor-eyebrow{color:#a33b38;text-transform:uppercase;font-size:10px;letter-spacing:1.5px;font-weight:850}
+.floor-team-card h3{font-size:23px;line-height:1.2;margin:6px 0 10px;font-weight:850;letter-spacing:-.6px}
+.floor-team-card p{font-size:12px;line-height:1.55;margin:0 0 10px}
+.floor-trial{display:flex;align-items:center;gap:20px}
+.floor-trial-bottle{background:transparent;border:0;box-shadow:none;display:flex;flex-direction:column;padding:0;min-width:110px;gap:0}
+.floor-trial-bottle .floor-bottle-art{height:150px;width:65px}
+.floor-trial-bottle span{font-size:10px;display:flex;gap:4px;align-items:center}
+.floor-trial>div{display:grid;gap:7px}
+.floor-trial>div .floor-button{font-size:11px;padding:10px}
+.floor-packing-belt{left:23%;right:29%;bottom:7%;gap:14px}
+.floor-packing-belt .floor-bottle-art{height:180px;width:75px}
+.floor-packing-belt .floor-object-tag{font-size:10px;padding:5px}
+.floor-pack-tray{position:absolute;right:3%;bottom:4%;display:grid;gap:9px;width:24%;background:#ead3a7;border:2px solid #957752;border-radius:6px;padding:16px;z-index:3;box-shadow:5px 5px 0 #6c4d3933}
+.floor-pack-tray strong{font-size:14px}
+.floor-pack-tray span{font-size:11px;min-height:18px}
+.floor-carton-art{display:block;width:145px;height:auto;overflow:visible;transition:transform .2s,filter .2s;margin:auto}
+.floor-label-carton .floor-carton-art{width:110px}
+.floor-carton-detail{display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:center;padding:10px 0}
+.floor-carton-detail .floor-carton-art{width:140px}
+.floor-carton-detail>div>p{font-size:12px;margin:5px 0}
+.floor-carton-detail>div>.floor-button{width:100%;justify-content:flex-start;margin-top:6px;font-size:11px;min-height:38px;padding:7px 10px}
+.floor-sku{font-size:18px!important;font-weight:850;letter-spacing:.5px}
+.floor-barcode{height:24px;width:120px;background:repeating-linear-gradient(90deg,#37413c 0px,#37413c 2px,transparent 2px,transparent 4px,#37413c 4px,#37413c 5px,transparent 5px,transparent 8px);margin:8px 0}
+.floor-condition{display:block;font-size:11px;line-height:1.5;padding:3px 5px;color:#315e47;background:#e1ecd8;border-radius:5px;text-align:center}
+.floor-condition.is-damaged{color:#b03936;background:#f9dcca}
+.floor-destinations{border-top:1px solid #cfbea1;padding-top:10px}
+.floor-destinations>small{font-size:10px;display:block;margin-bottom:8px;color:#63716a;font-weight:800}
+.floor-destinations>div{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.floor-zone-choice{padding:7px 4px;font-size:10px;min-height:38px;background:#f4e6c9;border-color:#a39375}
+.floor-report{border:0;border-top:1px solid #cfbea1;padding:9px 0 0;margin:0;display:grid;gap:5px}
+.floor-report legend{font-size:11px;font-weight:850;padding:0 0 8px}
+.floor-report .floor-button{font-size:11px;min-height:33px;padding:5px 8px}
+.floor-dialogue-copy{max-width:1050px}
+.floor-speaker{font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:#a13d38;font-weight:850;display:block;margin-bottom:7px}
+.floor-instruction{font-size:20px;line-height:1.45;letter-spacing:-.3px;font-weight:800;margin:0 0 13px;min-height:29px;overflow-wrap:anywhere}
+.floor-dialogue-copy.is-updating .floor-instruction,.floor-dialogue-copy.is-updating .floor-hint{animation:floor-text-enter .35s ease-out,floor-text-highlight 1.1s ease-out}
+@keyframes floor-text-enter{from{opacity:.2;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes floor-text-highlight{from{background-color:#edc78e80}to{background-color:transparent}}
+.floor-dialogue-meta{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.floor-feedback-tone{font-size:11px;color:#65766b;font-weight:650}
+.floor-feedback-tone.is-error{color:#b43436}
+.floor-feedback-tone.is-success{color:#487250}
+.floor-step-dots{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.floor-step-dots>span{width:7px;height:7px;border-radius:50%;background:#d2c7ae;display:block}
+.floor-step-dots .is-current{background:var(--red);width:24px;border-radius:4px}
+.floor-step-dots .is-done{background:#699077}
+.floor-hint{font-size:13px;line-height:1.55;background:#f7e6c3;border-left:3px solid #ca3a38;padding:9px 12px;border-radius:0 5px 5px 0;margin:0 0 12px;font-weight:600}
+.floor-foot{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:6px 22px;background:#f4e7cd;border-top:1px solid #ded0b3;color:#6d756b;font-size:10px;line-height:1.4}
+.floor-foot a{display:flex;align-items:center;gap:5px;color:#53685e;text-decoration:none;font-size:11px;font-weight:800}
+.floor-foot a svg{width:16px;height:16px}
+.floor-foot>.floor-button{font-size:10px;padding:6px;min-height:30px;color:#657466}
+.floor-finished,.floor-reset-panel{position:absolute;left:27%;right:23%;top:20%;background:#fff4df;border:2px solid #877b60;border-radius:12px;padding:22px;text-align:center;box-shadow:5px 7px 0 #6b57372b;z-index:25}
+.floor-finish-seal{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:#fff6dc;background:#5f8570;font-size:24px;margin:0 auto 10px}
+.floor-finished h3,.floor-reset-panel h3{font-size:25px;font-weight:850;letter-spacing:-.5px;line-height:1.25;margin:10px 0}
+.floor-finished p,.floor-reset-panel p{font-size:13px;line-height:1.6;margin:12px 0 20px}
+.floor-reset-panel{z-index:40;left:25%;right:25%;top:24%}
+.floor-reset-panel .floor-button{margin:4px}
+body[data-motion="off"] .floor-game *,body[data-tab-active="no"] .floor-game *{animation:none!important;transition:none!important}
+@media(min-width:1500px){.floor-bottle-art{height:240px;width:100px}.floor-samples .floor-bottle-art{height:270px;width:115px}.floor-inspector{top:20%}.floor-carton-detail{padding:20px 0}.floor-inspection-body{padding:20px 0}.floor-large-bottle .floor-bottle-art{height:250px}.floor-clipboard h3{font-size:23px}.floor-clipboard dt,.floor-clipboard dd{font-size:14px}.floor-clipboard p{font-size:14px}.floor-incident{gap:40px}.floor-repeat-bottles .floor-bottle-art{height:260px;width:100px}.floor-team-card{padding:28px}.floor-team-card h3{font-size:28px}.floor-team-card p{font-size:14px}.floor-trial-bottle .floor-bottle-art{height:210px;width:90px}.floor-trial>div .floor-button{font-size:13px}}
+@media(max-width:1050px){.floor-active #main{padding:12px}.floor-active .topbar{padding:0 16px}.floor-room{height:470px}.floor-clipboard{min-width:157px;padding:20px 10px 12px;right:2%}.floor-clipboard h3{font-size:16px}.floor-clipboard dt,.floor-clipboard dd{font-size:10px}.floor-products{left:22%;right:22%;gap:15px}.floor-inspector{left:23%;width:52%;padding:14px}.floor-location h2{font-size:23px}.floor-location p{font-size:13px}.floor-hud{padding:15px 20px}.floor-instruction{font-size:17px}.floor-incident{left:24%;right:24%;gap:15px}.floor-repeat-bottles .floor-bottle-art{height:190px;width:60px}.floor-incident-controls{min-width:170px}.floor-incident-controls .floor-button{font-size:11px}.floor-team-card{left:23%;right:22%;padding:16px}.floor-pack-tray{width:25%;padding:10px}.floor-pack-tray .floor-button{font-size:11px;padding:7px}.floor-packing-belt{right:29%;left:19%;gap:8px}.floor-packing-belt .floor-bottle-art{height:160px;width:64px}.floor-finished{left:23%;right:22%}}
+@media(max-width:700px){.floor-active .topbar{height:55px;min-height:55px;padding:0 12px}.floor-active .topbar .game-name,.floor-active .topbar .motion-toggle,.floor-active .topnav{display:none}.floor-active .topbar .brand img{width:130px;height:auto}.floor-active #main{padding:8px}.floor-game{border-radius:9px}.floor-room{height:500px;min-height:500px}.floor-background{object-position:38% center;opacity:.93}.floor-hud{padding:12px;gap:5px}.floor-location{gap:8px;padding-right:8px}.floor-red-square{width:15px;height:15px;margin-top:3px}.floor-location h2{font-size:20px;letter-spacing:-.5px}.floor-location p{font-size:11px;max-width:200px}.floor-tools{gap:0;padding:0 1px;background:#fff2dceF}.floor-tools .floor-button{padding:6px;min-width:36px;min-height:36px}.floor-tools .floor-button>span{display:none}.floor-tools svg{width:21px;height:21px}.floor-clipboard{top:100px;right:10px;min-width:0;width:149px;padding:18px 10px 9px;transform:rotate(1.5deg)}.floor-clipboard h3{font-size:15px;margin:3px 0 9px}.floor-clipboard dt,.floor-clipboard dd{font-size:9px;padding:6px 4px}.floor-paper-note{font-size:8px;margin-top:8px}.floor-pin{width:9px;height:9px;top:6px}.floor-products{left:4%;right:4%;bottom:6%;gap:18px}.floor-samples{right:2%;left:5%;gap:30px;bottom:4%}.floor-samples .floor-bottle-art{height:178px;width:78px}.floor-bottle-art{height:150px;width:65px}.floor-object-tag{font-size:10px;min-height:28px;padding:4px 7px}.floor-object-tag svg{width:13px;height:13px}.floor-object small{font-size:9px}.floor-inspector{left:3%;right:3%;top:88px;width:auto;max-width:none;padding:12px;box-shadow:0 10px 35px #263d3b70}.floor-inspector h3{font-size:19px}.floor-inspector header small{font-size:10px}.floor-label-layout{grid-template-columns:76px 1fr;gap:14px;padding:12px 0}.floor-label-bottle .floor-bottle-art{height:175px;width:72px}.floor-label-fields strong{font-size:13px}.floor-label-fields small{font-size:9px}.floor-label-fields span{font-size:9px}.floor-label-fields .floor-button{padding:7px 9px}.floor-sample-panel>.floor-button{font-size:12px}.floor-inspection-body{gap:26px;padding:12px 0}.floor-large-bottle .floor-bottle-art{height:194px;width:80px}.floor-lenses .floor-button{min-width:146px;font-size:12px;padding:9px}.floor-decision-row{gap:7px}.floor-decision-row>.floor-button{font-size:11px;padding:9px}.floor-scene-count{font-size:10px;bottom:8px;left:10px;padding:5px 8px}.floor-inspection-belt{bottom:7%;gap:12px}.floor-inspection-belt .floor-bottle-art{height:145px;width:59px}.floor-node{top:64%}.floor-node strong{font-size:9px;padding:6px 5px;white-space:nowrap}.floor-node span{width:33px;height:33px;font-size:15px}.floor-route-strip{left:6%;right:6%;bottom:5%;padding:12px;gap:8px;font-size:11px}.floor-incident{top:48%;left:7%;right:5%;bottom:2%;gap:14px;padding-top:32px}.floor-incident-label{font-size:10px;padding:5px 9px}.floor-repeat-bottles{gap:0}.floor-repeat-bottles .floor-bottle-art{height:150px;width:53px}.floor-incident-controls{min-width:0;flex:1;gap:6px}.floor-incident-controls .floor-button{font-size:10px;min-height:35px;padding:6px}.floor-incident-controls .is-text{font-size:9px;min-height:28px}.floor-team-card{left:3%;right:3%;top:90px;padding:16px}.floor-team-card h3{font-size:23px}.floor-team-card p{font-size:12px}.floor-trial{gap:12px}.floor-trial-bottle{min-width:87px}.floor-trial-bottle .floor-bottle-art{height:150px;width:65px}.floor-trial-bottle span{font-size:8px}.floor-trial>div .floor-button{font-size:10px;padding:9px}.floor-packing-belt{left:4%;right:4%;bottom:25%;gap:9px}.floor-packing-belt .floor-bottle-art{height:132px;width:55px}.floor-packing-belt .floor-object-tag{font-size:8px;padding:4px}.floor-pack-tray{left:5%;right:5%;width:auto;bottom:3%;padding:10px;grid-template-columns:1fr 1fr;align-items:center}.floor-pack-tray strong{font-size:12px}.floor-pack-tray span{grid-column:1;font-size:9px}.floor-pack-tray>.floor-button{grid-column:2;grid-row:1/3;font-size:10px}.floor-label-carton .floor-carton-art{width:80px}.floor-carton-detail{grid-template-columns:110px 1fr;gap:12px;padding:9px 0}.floor-carton-detail .floor-carton-art{width:110px}.floor-carton-detail>div>.floor-button{font-size:10px;padding:8px;min-height:37px}.floor-carton-detail>div>p{font-size:10px}.floor-sku{font-size:15px!important}.floor-condition{font-size:9px}.floor-zone-choice{font-size:9px;padding:6px 3px}.floor-speaker{font-size:8px;letter-spacing:1.2px;margin-bottom:6px}.floor-instruction{font-size:14px;line-height:1.45;letter-spacing:-.2px;margin-bottom:11px}.floor-feedback-tone{font-size:9px}.floor-step-dots{gap:4px}.floor-step-dots>span{width:5px;height:5px}.floor-step-dots>.is-current{width:15px}.floor-hint{font-size:10px;padding:7px 8px;margin-bottom:8px}.floor-dialogue-meta{gap:8px;align-items:flex-end}.floor-foot{padding:7px 10px;gap:8px;flex-wrap:wrap}.floor-foot>span{font-size:8px;order:3;flex-basis:100%;text-align:center}.floor-foot>a,.floor-foot>.floor-button{font-size:9px}.floor-foot>.floor-button{margin-left:auto;min-height:25px;padding:3px}.floor-finished,.floor-reset-panel{left:4%;right:4%;top:105px;padding:18px}.floor-finished h3,.floor-reset-panel h3{font-size:22px}.floor-finished p,.floor-reset-panel p{font-size:12px;line-height:1.6}.floor-finished>.floor-button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.floor-game *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Override the legacy mission shell's generic paragraph/button rules. */
+.floor-active .floor-game button.floor-button{border:1.5px solid #8f9789;color:var(--ink);touch-action:manipulation}
+.floor-active .floor-game button.floor-button.is-primary{color:#fff9ed;border-color:#a72b30}
+.floor-active .floor-game button.floor-button.is-text,.floor-active .floor-game button.floor-close{border:0}
+.floor-active .floor-game button.floor-button.is-checked{color:#325c46;border-color:#6a8c69}
+.floor-game .floor-instruction{color:var(--ink)}
+.floor-game .floor-expected{font-size:11px;line-height:1.5;color:#52645c;margin:9px 0 0;padding:6px 8px;background:#f0e4c9;border-radius:5px}
+.floor-paper-toggle,.floor-mobile-order{display:none}
+.floor-game--warehouse .floor-background{transform:scale(1.16);transform-origin:65% 68%;object-position:center 65%}
+.floor-object small:empty{display:none}
+
+@media(max-width:700px){
+ .floor-active #main{padding:8px!important}
+ .floor-background{object-position:left center}
+ .floor-game--warehouse .floor-background{transform:scale(1.23);transform-origin:60% 70%;object-position:48% center}
+ .floor-game .floor-zone-stock{display:none}
+ .floor-game .floor-clipboard{display:none}
+ .floor-game.is-paper-open .floor-clipboard{display:block;z-index:24;top:85px;right:10px;width:200px;padding:23px 14px 14px;box-shadow:0 8px 25px #35473e50}
+ .floor-game.is-paper-open .floor-clipboard h3{font-size:19px}
+ .floor-game.is-paper-open .floor-clipboard dt,.floor-game.is-paper-open .floor-clipboard dd{font-size:12px;padding:10px 6px}
+ .floor-game.is-paper-open .floor-clipboard p{font-size:12px}
+ .floor-game .floor-paper-toggle{display:inline-flex}
+ .floor-tools{min-height:44px;padding:0}
+ .floor-tools .floor-button{min-height:44px;min-width:40px}
+ .floor-location p{max-width:173px}
+ .floor-location h2{font-size:19px}
+ .floor-game .floor-close{min-width:44px;min-height:44px}
+ .floor-game .floor-button{min-height:44px;font-size:12px}
+ .floor-game .floor-label-fields .floor-button{font-size:12px;min-height:50px}
+ .floor-game .floor-zone-choice{font-size:10px;padding:7px 3px}
+ .floor-game .floor-report .floor-button{font-size:11px;min-height:40px}
+ .floor-game .floor-incident-controls .is-text{font-size:10px;min-height:38px}
+ .floor-game .floor-trial>div .floor-button{font-size:11px}
+ .floor-game .floor-trial-bottle{padding:0;border:0!important;background:none}
+ .floor-game .floor-expected{font-size:10px;margin:7px 0 0;padding:5px 7px}
+ .floor-game .floor-inspector header{padding-bottom:7px}
+ .floor-game .floor-label-layout{padding:9px 0}
+ .floor-game .floor-destinations>small{font-size:11px}
+ .floor-game .floor-carton-detail>div>.floor-button{font-size:11px;min-height:44px}
+ .floor-game .floor-carton-detail{padding:8px 0}
+ .floor-game .floor-instruction{font-size:15px;line-height:1.45}
+ .floor-game .floor-feedback-tone{font-size:10px}
+ .floor-game .floor-foot>.floor-button{font-size:10px;min-height:36px}
+ .floor-game .floor-foot>a{font-size:11px;min-height:36px}
+ .floor-game .floor-mobile-order{position:absolute;top:159px;left:10px;right:10px;display:block;background:#fff1dceF;border:1px solid #b6a180;border-radius:6px;font-size:10px;line-height:1.6;padding:7px 9px;z-index:4}
+ .floor-game .floor-hint{font-size:11px}
+ .floor-game .floor-pack-tray>.floor-button{font-size:11px;min-height:44px}
+ .floor-game .floor-decision-row>.floor-button{font-size:12px;min-height:46px}
+ .floor-game .floor-room{height:530px;min-height:530px}
+}
+
+/* Each warehouse control owns space in the layout instead of sharing coordinates. */
+.floor-game--warehouse .floor-room{height:auto;min-height:clamp(470px,57vh,670px)}
+.floor-warehouse-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:28px;min-height:inherit;padding:110px 28px 22px;align-items:start}
+.floor-warehouse-layout.has-inspector{grid-template-columns:minmax(0,1fr) minmax(330px,390px)}
+.floor-warehouse-main{display:flex;flex-direction:column;align-self:stretch;min-width:0;gap:18px;min-height:330px}
+.floor-warehouse-side{min-width:0;display:grid;align-content:start;gap:16px}
+.floor-game--warehouse .floor-warehouse-side .floor-clipboard{position:relative;inset:auto;display:block;transform:none;width:100%;min-width:0;max-width:none;margin:0;z-index:auto}
+.floor-game--warehouse .floor-warehouse-side .floor-inspector{position:relative;inset:auto;width:100%;max-width:none;max-height:none;overflow:visible;margin:0;padding:16px;z-index:auto;box-shadow:0 5px 14px #2d3f3a22}
+.floor-warehouse-layout .floor-shelf-zones{position:static;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;pointer-events:auto;z-index:auto}
+.floor-warehouse-layout .floor-shelf-label{position:static;transform:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:78px;padding:10px 8px;background:#fff1d5;border:1.5px solid #77674f;border-radius:6px;box-shadow:2px 3px 0 #5c4f323b;color:#2e4543;text-align:center}
+.floor-warehouse-layout .floor-shelf-label strong{font-size:15px;line-height:1.3;font-weight:850}
+.floor-warehouse-layout .floor-shelf-label>span{font-size:10px;line-height:1.4;font-weight:750}
+.floor-warehouse-layout .floor-shelf-label.is-review{background:#f8dfce;color:#a13b39;border-color:#a13b39}
+.floor-warehouse-layout .floor-place-hotspot{font-size:10px;min-height:36px;padding:5px 8px;width:100%;margin-top:3px}
+.floor-warehouse-layout .floor-products{position:static;inset:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));align-items:end;gap:14px;z-index:auto;margin-top:auto;padding-top:48px;max-height:none}
+.floor-warehouse-layout .floor-carton{width:100%;min-width:0;max-width:180px;justify-self:center}
+.floor-warehouse-layout .floor-carton-art{width:min(100%,160px);max-width:100%}
+.floor-warehouse-layout .floor-object-tag{font-size:11px;min-height:36px;padding:5px 6px;white-space:normal;overflow-wrap:anywhere}
+.floor-warehouse-layout .floor-object small{font-size:10px;white-space:normal;line-height:1.5}
+.floor-warehouse-layout .floor-pick-bench .is-picked .floor-carton-art{filter:drop-shadow(0 0 4px #4c7e5c)}
+.floor-warehouse-layout .floor-scene-count{position:static;inset:auto;align-self:flex-start;z-index:auto;margin:0}
+.floor-warehouse-layout .floor-receipt-box{position:static;inset:auto;align-self:center;width:210px;max-width:100%;margin-top:auto}
+.floor-warehouse-layout .floor-receipt-box .floor-carton-art{width:210px;max-width:100%}
+.floor-warehouse-layout .floor-order-tray{position:static;inset:auto;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:14px;background:#ead7b1;border:1.5px solid #8b795c;border-radius:8px;box-shadow:3px 4px 0 #6e583c25;z-index:auto}
+.floor-warehouse-layout .floor-order-tray>div{display:grid;gap:5px;flex:1 1 180px}
+.floor-warehouse-layout .floor-order-tray strong{font-size:13px}
+.floor-warehouse-layout .floor-order-tray span{font-size:11px;color:#5c6b60}
+.floor-warehouse-layout .floor-order-tray .floor-button{font-size:12px;min-height:44px}
+.floor-game .floor-dialogue{display:grid;grid-template-columns:110px minmax(0,1fr);align-items:center;gap:26px;position:relative;min-height:0;padding:18px 26px;background:linear-gradient(105deg,#fff5e2,#fff1d6);border-top:2px solid #d5c3a1;z-index:30}
+.floor-game .floor-guide{position:static;inset:auto;display:block;width:110px;height:148px;max-width:100%;margin:0;object-fit:contain;filter:drop-shadow(1px 2px 0 #b0763630);pointer-events:none}
+.floor-game .floor-dialogue-copy{min-width:0;max-width:none}
+@media(max-width:1100px){
+ .floor-warehouse-layout{grid-template-columns:minmax(0,1fr) 210px;gap:20px;padding:104px 20px 20px}
+ .floor-warehouse-layout.has-inspector{grid-template-columns:minmax(0,1fr) 320px}
+ .floor-warehouse-layout .floor-shelf-zones{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .floor-warehouse-layout .floor-products{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-top:24px}
+ .floor-warehouse-layout .floor-shelf-label{min-height:62px}
+ .floor-warehouse-layout .floor-shelf-label strong{font-size:13px}
+}
+@media(max-width:800px){
+ .floor-game--warehouse .floor-room{min-height:510px;height:auto}
+ .floor-warehouse-layout,.floor-warehouse-layout.has-inspector{grid-template-columns:minmax(0,1fr);gap:16px;padding:96px 16px 16px}
+ .floor-warehouse-main{min-height:398px;gap:14px}
+ .floor-warehouse-side{display:none}
+ .floor-game.is-paper-open .floor-warehouse-side{display:grid;grid-row:1}
+ .floor-warehouse-layout.has-inspector .floor-warehouse-side{display:grid;grid-row:1}
+ .floor-warehouse-layout.has-inspector .floor-warehouse-main{display:none}
+ .floor-warehouse-layout .floor-shelf-zones{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+ .floor-warehouse-layout .floor-shelf-label{padding:9px 5px;min-height:62px}
+ .floor-warehouse-layout .floor-shelf-label strong{font-size:12px}
+ .floor-warehouse-layout .floor-shelf-label>span{font-size:9px}
+ .floor-warehouse-layout .floor-products{grid-template-columns:repeat(3,minmax(0,1fr));padding-top:20px;gap:12px}
+ .floor-warehouse-layout .floor-carton-art{width:min(100%,128px)}
+ .floor-warehouse-layout .floor-mobile-order{position:static;inset:auto;display:block;background:#fff1dceF;border:1px solid #b6a180;border-radius:6px;font-size:11px;line-height:1.6;padding:8px 10px;z-index:auto}
+ .floor-game--warehouse .floor-paper-toggle{display:inline-flex}
+ .floor-game--warehouse .floor-warehouse-side .floor-clipboard{width:100%;padding:23px 16px 16px;max-width:none}
+ .floor-game--warehouse .floor-warehouse-side .floor-inspector{padding:16px;max-height:none;overflow:visible}
+ .floor-game .floor-dialogue{grid-template-columns:88px minmax(0,1fr);gap:16px;padding:14px 18px}
+ .floor-game .floor-guide{width:88px;height:120px}
+}
+@media(max-width:480px){
+ .floor-warehouse-layout,.floor-warehouse-layout.has-inspector{padding:92px 12px 14px}
+ .floor-warehouse-main{min-height:398px;gap:12px}
+ .floor-warehouse-layout .floor-shelf-zones{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .floor-warehouse-layout .floor-shelf-label{min-height:54px;padding:7px 5px;gap:3px}
+ .floor-warehouse-layout .floor-zone-stock{display:none}
+ .floor-warehouse-layout .floor-products{gap:12px 8px;padding-top:14px}
+ .floor-warehouse-layout .floor-carton-art{width:min(100%,100px)}
+ .floor-warehouse-layout .floor-object-tag{font-size:10px;min-height:34px;padding:4px}
+ .floor-warehouse-layout .floor-object small{font-size:9px}
+ .floor-warehouse-layout .floor-receipt-box{width:185px}
+ .floor-warehouse-layout .floor-receipt-box .floor-carton-art{width:185px}
+ .floor-warehouse-layout .floor-order-tray{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:11px}
+ .floor-warehouse-layout .floor-order-tray>div{grid-column:1/-1;min-width:0}
+ .floor-warehouse-layout .floor-order-tray .floor-button{padding:8px 5px;font-size:10px}
+ .floor-game--warehouse .floor-warehouse-side .floor-inspector{padding:12px}
+ .floor-warehouse-layout .floor-carton-detail{grid-template-columns:96px minmax(0,1fr);gap:12px}
+ .floor-warehouse-layout .floor-carton-detail .floor-carton-art{width:96px}
+ .floor-game .floor-dialogue{grid-template-columns:76px minmax(0,1fr);gap:12px;padding:12px}
+ .floor-game .floor-guide{width:76px;height:104px}
+}
+
+/* Line cards stay in normal flow: every action remains visible without a nested scroller. */
+.floor-active #main{padding:12px 24px 14px}
+.floor-game .floor-room{height:auto;min-height:470px}
+.floor-line-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:24px;padding:100px 28px 20px;min-height:470px;align-items:start}
+.floor-line-layout.is-packing{grid-template-columns:minmax(0,1fr)}
+.floor-line-main{position:relative;min-width:0;min-height:350px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:16px}
+.floor-line-main.is-inspecting{justify-content:flex-start}
+.floor-line-side{min-width:0}
+.floor-game--line .floor-line-side .floor-clipboard{position:relative;inset:auto;transform:none;width:100%;min-width:0;max-width:none;margin:0}
+.floor-game--line .floor-inspector{position:relative;inset:auto;width:min(100%,570px);max-width:none;max-height:none;overflow:visible;padding:14px 18px;animation:none}
+.floor-game .floor-inspector header{padding-bottom:8px}
+.floor-game .floor-label-layout{padding:10px 0;gap:18px}
+.floor-game .floor-label-bottle .floor-bottle-art{height:160px;width:70px}
+.floor-game .floor-expected{margin-top:7px}
+.floor-game .floor-inspection-body{padding:10px 0}
+.floor-game .floor-large-bottle .floor-bottle-art{height:182px;width:78px}
+.floor-line-layout .floor-products{position:static;inset:auto;display:flex;justify-content:center;align-items:flex-end;gap:26px;width:100%;margin-top:auto}
+.floor-line-layout .floor-samples .floor-bottle-art{height:230px;width:100px}
+.floor-line-layout .floor-inspection-belt .floor-bottle-art{height:210px;width:88px}
+.floor-line-layout .floor-scene-count{position:static;inset:auto;align-self:flex-start;margin:0}
+.floor-line-layout .floor-route-hotspots{position:static;inset:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:100%;margin-top:auto}
+.floor-line-layout .floor-node{position:static;inset:auto;transform:none;gap:12px;min-width:0}
+.floor-line-layout .floor-node strong{font-size:12px;padding:8px;white-space:normal;width:100%}
+.floor-line-layout .floor-route-strip{position:static;inset:auto;width:100%;margin:12px 0 18px;min-height:55px}
+.floor-line-layout .floor-incident{position:relative;inset:auto;gap:28px;padding:50px 0 0;max-width:100%;margin:auto}
+.floor-line-layout .floor-incident-controls{min-width:0;max-width:260px}
+.floor-line-layout .floor-repeat-bottles .floor-bottle-art{height:210px;width:75px}
+.floor-line-layout .floor-team-card{position:static;inset:auto;width:min(100%,640px);padding:18px;margin:auto}
+.floor-line-layout .floor-team-card h3{font-size:24px}
+.floor-line-layout .floor-team-card p{font-size:12px}
+.floor-line-layout .floor-trial-bottle .floor-bottle-art{height:155px;width:66px}
+.floor-line-layout .floor-packing-belt{gap:24px}
+.floor-line-layout .floor-packing-belt .floor-bottle-art{height:200px;width:83px}
+.floor-line-layout .floor-pack-tray{position:static;inset:auto;width:min(100%,760px);padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:10px;margin:0}
+.floor-line-layout .floor-pack-tray span{font-size:11px;min-height:0}
+.floor-game .floor-dialogue{grid-template-columns:90px minmax(0,1fr);gap:22px;padding:12px 24px}
+.floor-game .floor-guide{width:90px;height:120px}
+.floor-game .floor-instruction{font-size:18px;margin-bottom:10px}
+@media(min-width:1500px){
+ .floor-game .floor-room{min-height:clamp(470px,54vh,650px)}
+ .floor-line-layout{min-height:inherit}
+ .floor-line-main{min-height:calc(clamp(470px,54vh,650px) - 120px)}
+}
+@media(max-width:1100px){
+ .floor-line-layout{grid-template-columns:minmax(0,1fr) 200px;gap:18px;padding:100px 20px 20px}
+ .floor-line-layout .floor-products{gap:18px}
+ .floor-line-layout .floor-inspection-belt .floor-bottle-art{height:180px;width:75px}
+ .floor-line-layout .floor-incident{gap:15px}
+ .floor-line-layout .floor-repeat-bottles .floor-bottle-art{height:180px;width:63px}
+ .floor-line-layout .floor-node strong{font-size:11px;padding:7px 4px}
+}
+@media(max-width:800px){
+ .floor-line-layout{grid-template-columns:minmax(0,1fr);padding:92px 16px 16px;min-height:470px}
+ .floor-line-side{display:none}
+ .floor-game--line .floor-paper-toggle{display:inline-flex}
+ .floor-game--line.is-paper-open .floor-line-side{display:block;grid-row:1}
+ .floor-game--line.is-paper-open .floor-line-main{display:none}
+ .floor-game .floor-inspector{max-height:none;overflow:visible}
+ .floor-line-main{min-height:350px}
+ .floor-game .floor-dialogue{grid-template-columns:76px minmax(0,1fr);gap:14px;padding:12px 16px}
+ .floor-game .floor-guide{width:76px;height:104px}
+ .floor-game .floor-instruction{font-size:15px}
+}
+@media(max-width:480px){
+ .floor-line-layout{padding:90px 12px 14px}
+ .floor-game--line .floor-inspector{padding:12px}
+ .floor-line-layout .floor-products{gap:10px}
+ .floor-line-layout .floor-samples .floor-bottle-art{height:190px;width:78px}
+ .floor-line-layout .floor-inspection-belt .floor-bottle-art{height:142px;width:58px}
+ .floor-line-layout .floor-object-tag{font-size:10px;padding:5px}
+ .floor-line-layout .floor-route-hotspots{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+ .floor-line-layout .floor-incident{gap:12px;flex-wrap:wrap;justify-content:center;padding-top:40px}
+ .floor-line-layout .floor-incident-label{width:100%;text-align:center}
+ .floor-line-layout .floor-repeat-bottles .floor-bottle-art{height:140px;width:52px}
+ .floor-line-layout .floor-incident-controls{flex:1 1 160px}
+ .floor-line-layout .floor-team-card{padding:14px}
+ .floor-line-layout .floor-team-card h3{font-size:21px}
+ .floor-line-layout .floor-trial{gap:12px}
+ .floor-line-layout .floor-trial-bottle{min-width:74px}
+ .floor-line-layout .floor-trial-bottle .floor-bottle-art{height:140px;width:60px}
+ .floor-line-layout .floor-packing-belt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+ .floor-line-layout .floor-packing-belt .floor-bottle-art{height:146px;width:60px}
+ .floor-line-layout .floor-pack-tray{display:grid;grid-template-columns:minmax(0,1fr);padding:12px}
+ .floor-line-layout .floor-pack-tray>.floor-button,.floor-line-layout .floor-pack-tray span{grid-column:auto;grid-row:auto}
+ .floor-game .floor-label-layout{grid-template-columns:68px minmax(0,1fr);gap:12px}
+ .floor-game .floor-label-bottle .floor-bottle-art{height:154px;width:64px}
+ .floor-game .floor-inspection-body{gap:16px}
+ .floor-game .floor-large-bottle .floor-bottle-art{height:170px;width:71px}
+ .floor-game .floor-lenses .floor-button{min-width:0;font-size:12px;padding:9px}
+}

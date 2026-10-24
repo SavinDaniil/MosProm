@@ -1,6 +1,10 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const M=require('../dist/lab-story-model.js');
+// The repository is ESM; load the shipped UMD model like the other game tests.
+const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
+const modelModule={exports:{}};
+vm.compileFunction(fs.readFileSync(path.join(__dirname,'../dist/lab-story-model.js'),'utf8'),['module'])(modelModule);
+const M=modelModule.exports;
 
 test('a wrong sample and incomplete inspection cannot bypass traceability',()=>{
  let s=M.transition(M.fresh(),'start').state;
