@@ -5,8 +5,21 @@ import argparse
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import socket
 import sys
 import webbrowser
+
+
+class LocalHTTPServer(ThreadingHTTPServer):
+    def server_bind(self):
+        # Set MSS before the TCP handshake: large loopback segments can stall
+        # when the Linux desktop connection passes through a forwarding layer.
+        if sys.platform.startswith("linux") and hasattr(socket, "TCP_MAXSEG"):
+            try:
+                self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_MAXSEG, 1024)
+            except OSError:
+                pass
+        super().server_bind()
 
 
 def main():
@@ -24,7 +37,7 @@ def main():
 
     handler = partial(SimpleHTTPRequestHandler, directory=str(game_dir))
     try:
-        server = ThreadingHTTPServer(("127.0.0.1", args.port), handler)
+        server = LocalHTTPServer(("127.0.0.1", args.port), handler)
     except OSError as error:
         print("Не удалось запустить сервер: {}".format(error), file=sys.stderr)
         print("Если порт занят, запустите: ./start.sh --port 4175", file=sys.stderr)
