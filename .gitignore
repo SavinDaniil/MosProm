@@ -1,8 +1,3 @@
-node_modules/
-.pnpm-store/
-.browsers/
-dist/
-.playwright-cli/
-tmp/
-output/playwright/*.json
-output/playwright/*.txt
+__pycache__/
+*.pyc
+.DS_Store
