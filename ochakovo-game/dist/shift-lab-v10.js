@@ -1,7 +1,7 @@
 /* Illustrated preview. Shared v7 model and progress remain compatible with v8. */
 (() => {
  'use strict';
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('lab-v10.css?v=10.0',document.currentScript.src).href;document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('lab-v10.css?v=10.1',document.currentScript.src).href;document.head.append(css);
  const M=window.OchakovoLabModel,I=window.OchakovoLabInteraction,D=M.data,KEY='ochakovo-lab-workbench-v7',LEARNING='ochakovo-lab-learning-v9',MECHANICS='ochakovo-lab-interaction-v10';
  const fmt=n=>Number(n).toFixed(1).replace('.',',');
  const paths={arrow:'M4 12h15m-6-6 6 6-6 6',back:'M20 12H5m6-6-6 6 6 6',check:'m5 12 4 4L19 6',book:'M5 3h14v18H5zM9 7h6M9 11h6M9 15h4',play:'m9 5 10 7-10 7Z',close:'m6 6 12 12M6 18 18 6',info:'M12 10v6m0-10v1',route:'M6 4v16m12-16v16M4 6h16M4 18h16',pause:'M8 5v14M16 5v14'};
@@ -20,7 +20,7 @@
   let s=restore(),extra=read(LEARNING,{}),note='',bad=false,hint=false,closeView=false,picking=false,disposed=false,storageOK=true,lastTrigger=null,dialog,world;
   let mechanics=read(MECHANICS,{}),ref=I.refState(s,s.phase===4),opening=0,carry=Number(mechanics.carry)||0,drag=null,frame=0,lastTime=0,measureTimer=0,tempTimer=0,keyboardGrab=false;
   if(mechanics.ref&&mechanics.ref.context===ref.context){ref={...ref,...mechanics.ref,measuring:false};if((s.phase===2&&s.method==='brix')||s.phase===4){if(s.phase===2&&!s.control&&s.clean===false)ref.clean=!!mechanics.ref.clean;}}
-  let portions=new Set(extra.portions||[]),quiz=extra.quiz===true&&s.done;
+  let portions=new Set(extra.portions||[]),quiz=extra.quiz===true&&s.done,selected='',gestureProgress={};
   a.root.classList.add('lab-v10');
   const live=a.root.querySelector('.shift-feedback');live.classList.add('l10-announcer');
   const btn=(type,text,cls='',value='',disabled=false,attrs='')=>a.button('l10-'+type,text,value,'l10-button '+cls,`${disabled?'disabled':''} data-key="${type}:${value}" ${attrs}`);
@@ -43,22 +43,46 @@
   const paperHead=title=>`<header><img src="assets/ochakovo-logo.png" alt="Очаково" width="104" height="25"><h3>${title}</h3><p>Проба ${D.sample} · партия ${D.batch} · ${D.tank}</p></header>`;
   function rows(){return `<dl class="l10-rows"><div><dt>Титрование · расход</dt><dd>${s.titreSaved?fmt(D.titre/10)+' мл':'Ещё не записан'}</dd></div><div><dt>Рефрактометр · исходный</dt><dd>${s.brixSaved?fmt(D.brix)+' °Bx':'Ещё не записан'}</dd></div>${s.repeatStage===4?`<div><dt>Рефрактометр · повтор</dt><dd>${fmt(D.brix)} °Bx</dd></div>`:''}</dl>`;}
   function task(title,copy,detail=''){
-   return `<section class="l10-task"><h2 tabindex="-1">${title}</h2><p>${esc(copy)}</p>${detail?btn('detail',icon('info')+'О методе','l10-detail',detail):''}<div class="l10-context"><span>Проба <b>${D.sample}</b></span><span>Партия <b>${D.batch}</b></span></div></section>`;
+   return `<section class="l10-task"><h2 tabindex="-1">${title}</h2><p>${esc(copy)}</p>${detail?btn('detail',icon('info')+'О методе','l10-detail',detail):''}${guidance()}<div class="l10-feedback-slot"></div><div class="l10-context"><span>Проба <b>${D.sample}</b></span><span>Партия <b>${D.batch}</b></span></div></section>`;
   }
-  function feedback(fallback=''){
+  function progress(){
+   const labels=['Приёмка','Подготовка','Исследования','Сверка','Передача'];
+   return `<nav class="l10-progress" aria-label="Прогресс смены"><span>${s.done?'Смена завершена':`Этап ${s.phase+1} из 5 · ${labels[s.phase]}`}</span><ol>${labels.map((label,i)=>`<li class="${i===s.phase?'is-current':i<s.phase?'is-complete':''}" ${i===s.phase?'aria-current="step"':''}><span>${i<s.phase?icon('check'):i+1}</span><b>${label}</b></li>`).join('')}</ol></nav>`;
+  }
+  function guidance(){
+   let text='',actions='',steps=[];
+   if(s.started&&s.phase===1&&s.prep<3){
+    text=s.prep===0?'Нажми бутылку, затем зону температуры. Можно перетащить бутылку в эту зону.':s.prep===1?'Покачай бутылку в разные стороны или нажми «Перемешать образец».':'Нажми бутылку, затем ёмкость A. Повтори для B.';
+    if(s.prep===1)actions=btn('assist-mix','Перемешать образец');
+   }
+   if(s.phase===2&&!picking&&s.method==='titre'&&!s.titreSaved){
+    steps=[['Поставь колбу',s.rig],['Добавь раствор',s.volume>0],['Перемешай',s.volume>0&&s.mixed],['Оцени и запиши',s.observed]];
+    text=!s.rig?'Нажми колбу, затем место под бюреткой. Можно перетащить её.':opening?'Раствор поступает. Закрой кран перед перемешиванием.':!s.mixed?'Покачай колбу или нажми «Перемешать раствор».':s.observed?'Запиши наблюдение в журнал.':s.volume>D.titre?'Начни заново с новой порцией A.':s.volume>0?'Выбери наблюдение под колбой. Если окраска исчезла, продолжай добавление.':'Потяни кран вправо для подачи и влево для остановки. Для точной добавки используй кнопку.';
+    if(s.rig&&!s.observed&&s.volume<=D.titre)actions=opening?btn('stop-flow','Закрыть кран'):!s.mixed?btn('assist-mix','Перемешать раствор'):(s.volume<=20?btn('bulk-dose','Добавить 1,0 мл'):'')+btn('single-drop','Добавить 0,1 мл');
+   }
+   if((s.phase===2&&!picking&&s.method==='brix'&&!s.brixSaved)||(s.phase===4&&s.repeatStage<4)){
+    const repeat=s.phase===4,dirty=!ref.clean||ref.well==='residue'||s.control&&ref.well==='control';
+    steps=repeat?[['Очистка',s.repeatStage>=1],['Новая порция',s.repeatStage>=2],['Измерение',s.repeatStage>=3],['Запись',s.repeatStage>=4]]:[['Контроль',s.control],['Проба',s.loaded],['Измерение',s.read],['Запись',s.brixSaved]];
+    text=ref.measuring?'Измерение идёт. Дождись результата.':(repeat?s.repeatStage>=3:s.read)?'Внеси показание с экрана в журнал.':dirty?(ref.lid<.7?'Нажми «Открыть крышку» или потяни её вверх.':'Нажми салфетку, затем ячейку. Можно протереть её движениями салфетки.') :!ref.well?(ref.pipette?'Материал набран. Нажми пипетку, затем ячейку.':'Нажми пипетку, затем '+(!s.control&&!repeat?'контрольный материал.':'порцию пробы.')):ref.lid>.15?'Нажми «Закрыть крышку» или потяни её вниз.':'Нажми «Измерение» на приборе.';
+    if(!ref.measuring&&!(repeat?s.repeatStage>=3:s.read))actions=dirty&&ref.lid<.7?btn('lid-open','Открыть крышку'):!dirty&&ref.well&&ref.lid>.15?btn('lid-close','Закрыть крышку'):'';
+   }
+   return `${steps.length?`<ol class="l10-substeps" aria-label="Шаги исследования">${steps.map(([label,done])=>`<li class="${done?'is-complete':''}">${done?icon('check'):''}${label}</li>`).join('')}</ol>`:''}${text?`<div class="l10-guidance"><p data-gesture-cue>${esc(text)}</p>${actions}</div>`:''}`;
+  }
+  function feedback(fallback='',inline=false){
+   if(!inline)return '';
    const text=note||fallback;
-   return text?`<p class="l10-feedback ${bad?'is-error':''}" role="status">${icon(bad?'info':'check')}${esc(text)}</p>`:'';
+   return text?`<p class="l10-feedback ${bad?'is-error':''}">${icon(bad?'info':'check')}${esc(text)}</p>`:'';
   }
   function scene(html,cls=''){return `<div class="l10-scene ${cls}">${html}</div>`;}
   function companion(){
-   return `<aside class="l10-companion"><img src="assets/mascot-think.png" alt="Капля" width="70" height="92"><div>${hint?`<p>${esc(help[s.phase])}</p><p id="l10-gesture-help">Мышь или касание: захвати предмет и двигай. Клавиатура: Space — захват, стрелки — движение, Enter — отпустить; можно выбрать место назначения через Tab. Кран: стрелки — открыть, Home/Escape — закрыть. Крышка: ↑ открыть, ↓ закрыть.</p>`:'<span id="l10-gesture-help" class="l10-sr">Space — захват; стрелки — движение; Enter — отпустить. Можно Tab на место назначения. Кран: стрелки, Home закрыть. Крышка: стрелки.</span>'}${btn('hint',hint?'Скрыть помощь':'Помощь Капли','l10-help','',false,`aria-expanded="${hint}"`)}</div></aside>`;
+   return `<aside class="l10-companion"><img src="assets/mascot-think.png" alt="Капля" width="70" height="92"><div>${hint?`<p data-current-help></p><p id="l10-gesture-help">Можно нажать предмет, затем место назначения. Перетаскивание тоже работает. Клавиатура: Space — захват, стрелки — движение, Enter — отпустить; можно выбрать цель через Tab. Кран: стрелки — открыть, Home/Escape — закрыть. Крышка: ↑ открыть, ↓ закрыть.</p>`:'<span id="l10-gesture-help" class="l10-sr">Нажми предмет, затем цель. Space — захват; стрелки — движение; Enter — отпустить. Можно Tab на цель. Кран: стрелки, Home закрыть. Крышка: стрелки.</span>'}${btn('hint',hint?'Скрыть помощь':'Помощь Капли','l10-help','',false,`aria-expanded="${hint}"`)}</div></aside>`;
   }
   function welcome(){
    return task('Твоя смена\nв лаборатории','Лаборант помогает контролировать качество напитков. Прими пробу с производства, исследуй её и передай наставнику точные данные.')+scene(`<div class="l10-entry-sample">${bottle(D.sample)}</div><article class="l10-paper l10-assignment">${paperHead('Задание стажёру')}<p>Работай с пробой, бюреткой и рефрактометром. Наблюдай, сравнивай и записывай.</p><p class="l10-muted">Решение о выпуске партии принимает уполномоченный специалист.</p>${primary('start','Принять пробу')}<small>Без таймера и штрафов</small></article>`,'l10-entry');
   }
   function receipt(){
    const checked=k=>s.checks.includes(k);
-   return task('Прими пробу','Осмотри крышку и этикетку, затем сверь направление: результат должен относиться к нужной партии.')+scene(`<div class="l10-receipt-bottle">${bottle(D.sample,{open:checked('seal')})}${btn('inspect',checked('seal')?'Крышка целая':'Крышка','l10-cap-check','seal',false,`aria-pressed="${checked('seal')}"`)}${btn('inspect',checked('label')?'Этикетка сверена':'Этикетка','l10-label-check','label',false,`aria-pressed="${checked('label')}"`)}</div><article class="l10-paper l10-direction">${paperHead('Направление')}<dl class="l10-rows"><div><dt>Партия</dt><dd>${D.batch}</dd></div><div><dt>Источник</dt><dd>${D.tank}</dd></div></dl><p>Основа напитка · отбор 10:20<br>До насыщения газом</p>${btn('inspect',checked('source')?icon('check')+'Источник совпал':'Сверить с этикеткой','','source',false,`aria-pressed="${checked('source')}"`)}<p class="l10-count">Проверено ${s.checks.length} из 3</p>${primary('register','Зарегистрировать','',s.checks.length<3)}</article>`,'l10-receipt')+feedback();
+   return task('Прими пробу','Осмотри крышку и этикетку, затем сверь направление: результат должен относиться к нужной партии.')+scene(`<div class="l10-receipt-bottle">${bottle(D.sample,{open:checked('seal')})}${btn('inspect',checked('seal')?'Крышка целая':'Крышка','l10-cap-check','seal',false,`aria-pressed="${checked('seal')}"`)}${btn('inspect',checked('label')?'Этикетка сверена':'Этикетка','l10-label-check','label',false,`aria-pressed="${checked('label')}"`)}</div><article class="l10-paper l10-direction">${paperHead('Направление')}<dl class="l10-rows"><div><dt>Партия</dt><dd>${D.batch}</dd></div><div><dt>Источник</dt><dd>${D.tank}</dd></div></dl><p>Основа напитка · отбор 10:20<br>До насыщения газом</p>${checked('source')?'<p class="l10-saved">Источник сверен: T-07</p>':`<fieldset class="l10-source-question"><legend>Какой источник указан на этикетке бутылки?</legend>${['T-17','T-07','T-70'].map(v=>btn('source-check',v,'',v)).join('')}</fieldset>`}<p class="l10-count">Проверено ${s.checks.length} из 3</p>${primary('register','Зарегистрировать','',s.checks.length<3)}</article>`,'l10-receipt')+feedback();
   }
   function preparation(){
    const texts=[['Подготовь условия','Перенеси пробу в зону подготовки температуры. Условия могут влиять на показания; учебная карточка задаёт 19–21 °C.'],['Перемешай образец','Возьми бутылку и покачай её в разные стороны. Порции должны отражать состав пробы; ничего не добавляй.'],['Подготовь две порции','Перенеси исходную пробу к каждой чистой ёмкости, чтобы выделить отдельные порции A и B.'],['Обе порции готовы','Температура 20,2 °C, проба перемешана. Отдельные порции связаны с L-041. Выбери первое исследование.']][s.prep];
@@ -69,8 +93,9 @@
   }
   function deviceArt({preview=false}={}){
    const val=ref.measuring?'…':preview?'—':s.phase===4?(s.repeatStage>=3?fmt(D.brix):'—'):s.read?fmt(D.brix):s.control&&ref.well==='control'?fmt(D.control):'—';
-   const aria=ref.measuring?'Измерение':val==='—'?'Нет показания':`Показание ${val} градусов Брикс`;
-   return `<div class="l10-device" data-info="brix" style="--lid:${preview?1:ref.lid}">${part(0,'l10-device-body','Настольный рефрактометр')}<svg class="l10-device-overlay" viewBox="24 140 632 400" role="img" aria-label="${aria}"><foreignObject width="178" height="112" transform="matrix(.98 .15 -.65 .95 166 200)"><div xmlns="http://www.w3.org/1999/xhtml" class="l10-reading"><strong>${val}</strong><span>°Bx</span><small>${ref.measuring?'ИЗМЕРЕНИЕ':val==='—'?'ГОТОВ К РАБОТЕ':'СТАБИЛЬНО'}</small></div></foreignObject></svg><div class="l10-well ${ref.well?'has-sample':''}" data-site="well" tabindex="${preview?'-1':'0'}" role="group" aria-label="Измерительная ячейка">${ref.well?'<i class="l10-well-liquid"></i>':''}</div><div class="l10-lid" ${preview?'':`data-mechanism="lid" tabindex="0" role="slider" aria-label="Крышка рефрактометра" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(ref.lid*100)}" aria-valuetext="${ref.lid>.7?'Открыта':ref.lid<.2?'Закрыта':'Приоткрыта'}" title="Потяни крышку вверх, чтобы открыть; вниз — закрыть"`}>${part(1)}<span class="l10-mechanism-label">Крышка</span></div>${preview?'':btn('instrument-read','Измерение','l10-instrument-key','','', 'aria-label="Клавиша измерения рефрактометра"')}<span class="l10-device-name">РЕФРАКТОМЕТР</span></div>`;
+   const displayStatus=preview?'ОБЗОР ПРИБОРА':ref.measuring?'ИЗМЕРЕНИЕ':val!=='—'?'СТАБИЛЬНО':!ref.clean||ref.well==='residue'?'НУЖНА ОЧИСТКА':!ref.well?'НАНЕСИ МАТЕРИАЛ':ref.lid>.15?'ЗАКРОЙ КРЫШКУ':'МОЖНО ИЗМЕРЯТЬ';
+   const aria=ref.measuring?'Измерение':val==='—'?displayStatus:`Показание ${val} градусов Брикс`;
+   return `<div class="l10-device" data-info="brix" style="--lid:${preview?1:ref.lid}">${part(0,'l10-device-body','Настольный рефрактометр')}<svg class="l10-device-overlay" viewBox="24 140 632 400" role="img" aria-label="${aria}"><foreignObject width="178" height="112" transform="matrix(.98 .15 -.65 .95 166 200)"><div xmlns="http://www.w3.org/1999/xhtml" class="l10-reading"><strong>${val}</strong><span>°Bx</span><small>${displayStatus}</small></div></foreignObject></svg><div class="l10-well ${ref.well?'has-sample':''}" data-site="well" tabindex="${preview?'-1':'0'}" role="group" aria-label="Измерительная ячейка">${ref.well?'<i class="l10-well-liquid"></i>':''}</div><div class="l10-lid" ${preview?'':`data-mechanism="lid" tabindex="0" role="slider" aria-label="Крышка рефрактометра" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(ref.lid*100)}" aria-valuetext="${ref.lid>.7?'Открыта':ref.lid<.2?'Закрыта':'Приоткрыта'}" title="Потяни крышку вверх, чтобы открыть; вниз — закрыть"`}>${part(1)}<span class="l10-mechanism-label">Крышка</span></div>${preview?'':btn('instrument-read','Измерение','l10-instrument-key','','', 'aria-label="Клавиша измерения рефрактометра"')}<span class="l10-device-name">РЕФРАКТОМЕТР</span></div>`;
   }
   function methods(){
    return task('Выбери исследование','Один метод помогает исследовать кислотность, другой — оценить содержание растворённых веществ. Нужны оба результата.')+scene(`<div class="l10-method"><div class="l10-method-art">${part(2,'','Бюретка')}${sprite(5,'l10-mini-flask')}</div><h3>Титрование</h3>${primary('method',s.titreSaved?'Открыть запись':'Работать с бюреткой','titre')}</div><div class="l10-method">${deviceArt({preview:true})}<h3>Рефрактометрия</h3>${primary('method',s.brixSaved?'Открыть запись':'Работать с прибором','brix')}</div>`,'l10-methods');
@@ -114,16 +139,20 @@
    return task('Передай всю картину','Оба показания 9,2 °Bx ниже учебного диапазона. Причина не установлена: наставнику нужны обе записи и отметка об отклонении.')+scene(`<article class="l10-paper l10-handover">${paperHead('Для наставника')}${rows()}<p class="l10-conclusion">Отклонение подтверждено повтором.<br>Причина не установлена.</p>${primary('handover','Передать данные наставнику')}<p class="l10-muted">Решение по партии P-214 — у уполномоченного специалиста.</p></article>`,'l10-documents')+feedback();
   }
   function final(){
-   return task('Точные данные —\nпомощь команде','Ты принял пробу, подготовил её, выполнил два исследования, заметил отклонение, сохранил повтор и передал данные наставнику.')+scene(`<article class="l10-paper l10-final-paper">${paperHead('Итог первой смены')}${rows()}<p class="l10-conclusion">9,2 °Bx ниже 9,8–10,2 °Bx.<br>Исходное измерение и повтор переданы.</p><p>Лаборант помогает контролировать качество напитков: исследует пробы, получает точные данные и сообщает об отклонениях.</p>${quiz?`<p class="l10-saved">${icon('check')}Передавать нужно обе записи: так команда видит полную картину.</p>${a.button('finish','Записать открытие'+icon('arrow'),'','l10-button l10-primary')}`:`<fieldset class="l10-quiz"><legend>Повтор подтвердил отклонение. Что передашь наставнику?</legend>${btn('answer','Исходный результат, повтор и отметку об отклонении','','all')}${btn('answer','Только повтор: первый результат можно удалить','','repeat')}${btn('answer','Значение из диапазона, чтобы не задерживать партию','','range')}</fieldset>`}${btn('about','О профессии и практике','l10-text')}${btn('restart','Пройти заново','l10-text')}</article>`,'l10-documents l10-final')+feedback();
+   return task('Точные данные —\nпомощь команде','Ты принял пробу, подготовил её, выполнил два исследования, заметил отклонение, сохранил повтор и передал данные наставнику.')+scene(`<article class="l10-paper l10-final-paper">${paperHead('Итог первой смены')}${rows()}<p class="l10-conclusion">9,2 °Bx ниже 9,8–10,2 °Bx.<br>Исходное измерение и повтор переданы.</p><p>Лаборант помогает контролировать качество напитков: исследует пробы, получает точные данные и сообщает об отклонениях.</p>${quiz?`<p class="l10-saved">${icon('check')}Даже если повтор попал в диапазон, нужны обе записи и их связь с пробой. Причину расхождения выясняет специалист.</p>${a.button('finish','Записать открытие'+icon('arrow'),'','l10-button l10-primary')}`:`<fieldset class="l10-quiz"><legend>Новый учебный пример: проба L-052 дала 9,6 °Bx, повтор — 10,0 °Bx при диапазоне 9,8–10,2. Что передашь наставнику?</legend>${btn('answer','Оба результата с номером пробы и отметкой о расхождении','','all')}${btn('answer','Только 10,0 °Bx: повтор находится в диапазоне','','repeat')}${btn('answer','Только 9,6 °Bx: достаточно сообщить об отклонении','','range')}</fieldset>`}${btn('about','О профессии и практике','l10-text')}${btn('restart','Пройти заново','l10-text')}</article>`,'l10-documents l10-final')+feedback();
   }
   function paint(){
    if(disposed)return;a.settle();
    const active=document.activeElement,hadFocus=world.contains(active),key=active?.closest('[data-key]')?.dataset.key,mechanism=active?.dataset.mechanism;
    const html=!s.started?welcome():s.phase===0?receipt():s.phase===1?preparation():s.phase===2?(picking||!s.method?methods():s.method==='titre'?titration():refraction()):s.phase===3?results():team();
-   world.innerHTML=html+companion()+`<footer class="l10-foot">${btn('about','Учебная модель','l10-text')}<span>${storageOK?'Прогресс сохранён на устройстве':'Сохранение недоступно: прогресс до закрытия страницы'}</span></footer>`;
+   selected='';
+   world.innerHTML=progress()+html+`<footer class="l10-foot">${btn('about','Учебная модель','l10-text')}<span>${storageOK?'Прогресс сохранён на устройстве':'Сохранение недоступно: прогресс до закрытия страницы'}</span></footer>`;
    world.className='l10-world '+(!s.started?'is-entry':'is-phase-'+s.phase)+(s.done?' is-final':'');
-   if(hadFocus){const next=mechanism?world.querySelector(`[data-mechanism="${mechanism}"]`):[...world.querySelectorAll('[data-key]')].find(n=>n.dataset.key===key&&!n.disabled);(next||world.querySelector('[data-next]:not(:disabled)')||world.querySelector('[data-grab],button:not(:disabled)'))?.focus({preventScroll:true});}
+   if(hadFocus){const next=mechanism?world.querySelector(`[data-mechanism="${mechanism}"]`):[...world.querySelectorAll('[data-key]')].find(n=>n.dataset.key===key&&!n.disabled);(next||world.querySelector('[data-next]:not(:disabled)')||world.querySelector('.l10-guidance button')||world.querySelector('[data-grab],button:not(:disabled)'))?.focus({preventScroll:true});}
+   const taskNode=world.querySelector('.l10-task');
+   if(taskNode){taskNode.insertAdjacentHTML('beforeend',companion());taskNode.querySelector('.l10-feedback-slot').innerHTML=feedback('',true);const helpNode=taskNode.querySelector('[data-current-help]');if(helpNode)helpNode.textContent=taskNode.querySelector('[data-gesture-cue]')?.textContent||taskNode.querySelector(':scope > p')?.textContent||help[s.phase];}
    syncEquipment();
+   live.textContent=note;
   }
   function part(n,cls='',label=''){
    const boxes=[[24,140,632,400],[760,180,395,315],[165,610,350,625],[760,815,390,205]],v=boxes[n],id='l10-part-'+(++spriteID);
@@ -132,18 +161,19 @@
   function grab(kind,label,html,cls='',attrs=''){
    return `<div class="l10-grabbable ${cls}" data-grab="${kind}" tabindex="0" role="button" aria-label="${esc(label)}" aria-describedby="l10-gesture-help" title="${esc(label)}" ${attrs}>${html}<span class="l10-grip-label">${label}</span></div>`;
   }
-  function announce(text,error=false){note=text;bad=error;live.textContent=text;const box=world.querySelector('.l10-feedback');if(box){box.innerHTML=icon(error?'info':'check')+esc(text);box.classList.toggle('is-error',error);}else world.insertAdjacentHTML('beforeend',feedback());}
+  function announce(text,error=false){note=text;bad=error;live.textContent=text;const box=world.querySelector('.l10-feedback');if(box){box.innerHTML=icon(error?'info':'check')+esc(text);box.classList.toggle('is-error',error);}else world.querySelector('.l10-feedback-slot')?.insertAdjacentHTML('beforeend',feedback('',true));}
   function syncEquipment(){
    const valve=world.querySelector('[data-mechanism="valve"]');
    if(valve){valve.style.setProperty('--opening',opening);valve.setAttribute('aria-valuenow',String(Math.round(opening)));valve.setAttribute('aria-valuetext',opening?'Открыт '+Math.round(opening)+' процентов':'Закрыт');}
    const volume=world.querySelector('[data-volume]');if(volume)volume.textContent=fmt(s.volume/10);
    const status=world.querySelector('[data-flow-status]');if(status)status.textContent=opening?'Подача · '+Math.round(opening)+'% открытия':'Кран закрыт';
    const rate=world.querySelector('[data-flow-rate]');if(rate)rate.textContent=fmt(I.flowRate(opening)/10)+' мл/с · начало 0,0 мл';
+   syncTitreTask();
    const rig=world.querySelector('.l10-rig');if(rig){rig.classList.toggle('is-flowing',opening>0);rig.style.setProperty('--used',s.volume);}
    const liquid=world.querySelector('.l10-liquid-base');if(liquid)liquid.setAttribute('fill',s.mixed&&s.volume>=D.titre?(s.volume>D.titre?'#d9659a':'#f3b3ce'):'#f3e4b6');
    const spot=world.querySelector('.l10-reaction-spot');if(spot)spot.setAttribute('opacity',!s.mixed?'.95':'0');
-   const caption=world.querySelector('[data-colour]');if(caption)caption.textContent=!s.mixed?'Локальная окраска: закрой кран и перемешай':s.volume===0?'Порция A':s.volume>D.titre?'Яркая окраска — момент пройден':s.volume===D.titre?'Слабая окраска сохраняется':'Окраска исчезла после перемешивания';
-   const device=world.querySelector('.l10-ref-bench .l10-device');if(device)device.style.setProperty('--lid',ref.lid);
+   const caption=world.querySelector('[data-colour]');if(caption)caption.textContent=!s.mixed?(opening?'Локальная окраска: закрой кран и перемешай':'Кран закрыт — перемешай раствор'):s.volume===0?'Порция A':s.volume>D.titre?'Яркая окраска — момент пройден':s.volume===D.titre?'Слабая окраска сохраняется':'Окраска исчезла после перемешивания';
+   const device=world.querySelector('.l10-ref-bench .l10-device');if(device){device.style.setProperty('--lid',ref.lid);device.classList.toggle('is-lid-open',ref.lid>.7);}
    const lid=world.querySelector('[data-mechanism="lid"]');if(lid){lid.setAttribute('aria-valuenow',String(Math.round(ref.lid*100)));lid.setAttribute('aria-valuetext',ref.lid>.7?'Открыта':ref.lid<.15?'Закрыта':'Приоткрыта');}
   }
   function setValve(value){
@@ -157,14 +187,17 @@
   function flowTick(time){
    frame=0;if(disposed||!opening)return;
    const r=I.integrate(s.volume,carry,opening,(time-lastTime)/1000);lastTime=time;carry=r.carry;
-   if(r.volume!==s.volume){s={...s,volume:r.volume,mixed:false,observed:false};save();syncEquipment();}
+   if(r.volume!==s.volume){if(s.mixed)delete gestureProgress.flask;s={...s,volume:r.volume,mixed:false,observed:false};save();syncEquipment();}
    if(s.volume>=50){setValve(0);announce('Подача остановлена: учебная вместимость достигнута. Перемешай и оцени раствор.',true);return;}
    frame=requestAnimationFrame(flowTick);
   }
   function stopOperations(){setValve(0);clearTimeout(measureTimer);measureTimer=0;if(ref.measuring)ref.measuring=false;clearInterval(tempTimer);tempTimer=0;}
   function instrumentRead(){
    if(ref.measuring)return;
-   if(ref.lid>.15){announce('Закрой крышку перед измерением.',true);return;}
+   const dirty=!ref.clean||ref.well==='residue'||s.control&&ref.well==='control';
+   if(dirty){announce(ref.lid<.7?'Сначала открой крышку и очисти ячейку.':'Сначала протри ячейку салфеткой.',true);return;}
+   if(!ref.well){announce('Сначала набери пипеткой '+(!s.control&&s.phase!==4?'контрольный материал.':'пробу и нанеси её на ячейку.'),true);return;}
+   if(ref.lid>.15){announce('Материал нанесён. Закрой крышку перед измерением.',true);return;}
    if(!ref.well||ref.well==='residue'){announce('Нужна подготовленная поверхность и нанесённый материал.',true);return;}
    const repeat=s.phase===4;
    if(ref.well==='sample'&&(!ref.clean||(!repeat&&!s.loaded)||(repeat&&s.repeatStage<2))){announce('Проба ещё не подготовлена к измерению.',true);return;}
@@ -180,21 +213,50 @@
    }
   }
   function locateSite(point){return [...world.querySelectorAll('[data-site]')].find(n=>{const r=n.getBoundingClientRect();return point.x>=r.left&&point.x<=r.right&&point.y>=r.top&&point.y<=r.bottom;});}
+  function selectItem(node){
+   const kind=node.dataset.grab;
+   if(kind==='mix-source'||kind==='flask'&&s.rig){announce('Покачай предмет в разные стороны или используй кнопку перемешивания.');return;}
+   selected=selected===kind?'':kind;
+   world.querySelectorAll('[data-grab]').forEach(n=>{n.classList.toggle('is-selected',n.dataset.grab===selected);n.setAttribute('aria-pressed',String(n.dataset.grab===selected));});
+   world.querySelectorAll('[data-site]').forEach(n=>n.classList.toggle('is-available',!!selected&&validSite(selected,n.dataset.site)));
+   if(selected)announce(kind==='pipette'?(ref.pipette?'Пипетка выбрана. Нажми открытую ячейку.':'Пипетка выбрана. Нажми подписанную ёмкость с материалом.'):kind==='cloth'?'Салфетка выбрана. Нажми открытую ячейку, чтобы протереть.':'Предмет выбран. Нажми подсвеченное место назначения.');
+  }
+  function validSite(kind,site){return kind==='source'?(s.prep===0?site==='temperature':site.startsWith('portion-')):kind==='flask'?site==='flask-seat':kind==='cloth'?site==='well':kind==='pipette'?(ref.pipette?['well','waste'].includes(site):['vial-control','vial-sample'].includes(site)):false;}
+  function tapSite(site){
+   const node=[...world.querySelectorAll('[data-grab]')].find(n=>n.dataset.grab===selected);if(!node)return;
+   const r=site.getBoundingClientRect(),d=makeDrag(node,r.left+r.width/2,r.top+r.height/2);if(!d)return;
+   // A tap is an explicit alternative to the same wiping operation.
+   if(d.kind==='cloth'&&site.dataset.site==='well')d.wipe=70;
+   selected='';world.querySelectorAll('.is-selected,.is-available').forEach(n=>n.classList.remove('is-selected','is-available'));
+   world.querySelectorAll('[data-grab]').forEach(n=>n.setAttribute('aria-pressed','false'));
+   finishDrag(d,site);
+  }
+  function syncTitreTask(){
+   if(s.phase!==2||s.method!=='titre'||s.titreSaved||picking||!s.rig||s.observed)return;
+   const h=world.querySelector('.l10-task h2'),p=world.querySelector('.l10-task > p'),g=world.querySelector('.l10-guidance');
+   if(!h||!p)return;
+   if(opening){h.textContent='Останови подачу';p.textContent='Раствор поступает. Закрой кран, затем перемешай колбу и оцени окраску.';}
+   else if(!s.mixed){h.textContent='Перемешай и наблюдай';p.textContent='Кран закрыт. Плавно покачай колбу в разные стороны: локальная окраска ещё не означает завершение.';}
+   else {h.textContent=s.volume===0?'Управляй подачей':s.volume>D.titre?'Возьми новую порцию':'Оцени окраску';p.textContent=s.volume===0?'Поверни кран, чтобы начать подачу, или добавь раствор точной кнопкой.':s.volume>D.titre?'Момент завершения пройден. Повтори опыт на новой порции без штрафа.':'Оцени окраску после перемешивания. Если она исчезла, продолжай добавление по капле.';}
+   if(g){const holder=document.createElement('div');holder.innerHTML=guidance();const next=holder.querySelector('.l10-guidance');if(next&&g.innerHTML!==next.innerHTML){const focused=g.contains(document.activeElement);g.innerHTML=next.innerHTML;if(focused)g.querySelector('button')?.focus({preventScroll:true});}}
+  }
   function pointForDrag(d){const r=d.node.getBoundingClientRect();return d.kind==='pipette'?{x:r.left+r.width/2,y:r.bottom-8}:{x:d.x,y:d.y};}
   function makeDrag(node,x,y){
    const kind=node.dataset.grab;if(kind==='flask'&&opening){announce('Сначала закрой кран. Подавать раствор в движущуюся колбу нельзя.',true);return null;}
    if(ref.measuring){announce('Дождись показания прибора.',true);return null;}
-   const rect=node.getBoundingClientRect();return {node,kind,startX:x,startY:y,x,y,dx:0,dy:0,lastDX:0,lastDY:0,path:I.gesture(),wipe:0,rect};
+   const rect=node.getBoundingClientRect();return {node,kind,startX:x,startY:y,x,y,dx:0,dy:0,lastDX:0,lastDY:0,moved:false,path:I.gesture(gestureProgress[kind]),wipe:gestureProgress[kind]?.wipe||0,rect};
   }
   function moveDrag(d,x,y){
    const scale=world.querySelector('.l10-rig')?.getBoundingClientRect().height/625||1;
    const docked=d.kind==='flask'&&s.rig,limit=docked||d.kind==='mix-source'?140:1000;
    d.dx=I.clamp(x-d.startX,-limit,limit);d.dy=I.clamp(y-d.startY,-(docked?100:1000),docked?45:1000);d.x=d.startX+d.dx;d.y=d.startY+d.dy;
    const vx=d.dx-d.lastDX,vy=d.dy-d.lastDY;d.lastDX=d.dx;d.lastDY=d.dy;
+   if(Math.hypot(d.dx,d.dy)>4)d.moved=true;
    d.node.style.transform=`translate(${d.dx}px,${d.dy}px) rotate(${d.kind==='flask'||d.kind==='mix-source'?I.clamp(vx*.35,-12,12):d.kind==='pipette'?-8:0}deg)`;
    d.node.classList.add('is-grabbed');
    const progress=d.path.move(vx/(scale||1),vy/(scale||1));
    world.querySelectorAll('.l10-gesture-meter').forEach(m=>m.value=progress.amount);
+   const cue=world.querySelector('[data-gesture-cue]');if(cue&&(d.kind==='mix-source'||d.kind==='flask'&&s.rig)&&progress.ready)cue.textContent='Готово — отпусти '+(d.kind==='flask'?'колбу.':'пробу.');
    const liquid=d.node.querySelector('.l10-liquid');if(liquid){liquid.style.transform=`rotate(${I.clamp(-vx*.45,-10,10)}deg)`;const spot=liquid.querySelector('.l10-reaction-spot');if(spot&&!s.mixed)spot.style.opacity=String(1-progress.amount*.8);}
    const site=locateSite(pointForDrag(d));world.querySelectorAll('[data-site]').forEach(n=>n.classList.toggle('is-target',n===site));
    if(d.kind==='cloth'&&site?.dataset.site==='well'){
@@ -205,6 +267,8 @@
   function finishDrag(d,site){
    d.node.style.transform='';d.node.classList.remove('is-grabbed');world.querySelectorAll('.is-target').forEach(n=>n.classList.remove('is-target'));
    const target=site?.dataset.site,progress=d.path.progress();
+   gestureProgress[d.kind]={...progress,wipe:d.wipe};
+   if(progress.ready)delete gestureProgress[d.kind];
    if(d.kind==='flask'){
     if(!s.rig){if(target==='flask-seat')dispatch('rig');else announce('Поставь колбу на отмеченное место под носиком бюретки.',true);}
     else if(!s.mixed){if(progress.ready){dispatch('mix');announce(s.volume===D.titre?'После перемешивания слабая окраска остаётся. Оцени наблюдение.':s.volume>D.titre?'Окраска слишком яркая. Для повторения нужна новая порция.':'Окраска исчезла. Ты перемешал раствор; оцени наблюдение или продолжай.');}else{syncEquipment();announce('Нужно перемешать всю порцию: сделай ещё несколько плавных движений в разные стороны.',true);}}
@@ -215,7 +279,7 @@
     else if(s.prep===2&&target?.startsWith('portion-')){const v=target.slice(-1);portions.add(v);save();if(portions.size===2)dispatch('prepare');else{note='Порция '+v+' выделена. Подготовь вторую.';paint();}}
     else announce('Перенеси пробу к нужному месту подготовки.',true);
    }else if(d.kind==='cloth'){
-    if(ref.lid>=.7&&d.wipe>=70){ref.clean=true;ref.well='';if(s.phase===4)dispatch('repeat-clean');else if(s.control&&!s.clean)dispatch('clean');else{save();note='Поверхность подготовлена. Теперь нужен контрольный материал.';paint();}}
+    if(ref.lid>=.7&&d.wipe>=70){delete gestureProgress.cloth;ref.clean=true;ref.well='';if(s.phase===4)dispatch('repeat-clean');else if(s.control&&!s.clean)dispatch('clean');else{save();note='Поверхность подготовлена. Теперь нужен контрольный материал.';paint();}}
     else announce('Протри открытую ячейку несколькими движениями салфетки.',true);
    }else if(d.kind==='pipette'){
     if(target==='vial-control'||target==='vial-sample'){ref.pipette=target==='vial-control'?'control':'sample';save();note=ref.pipette==='control'?'В пипетке контрольный материал.':'В пипетке отдельная порция пробы.';paint();}
@@ -248,10 +312,11 @@
   function pointerUp(event){
    if(!drag||keyboardGrab)return;const d=drag;drag=null;
    if(d.mechanism){if(d.mechanism==='lid')setLid(ref.lid,true);else if(!d.moved&&opening>0)setValve(0);else if(!opening){save();paint();}return;}
-   if(d.path.progress().distance<4){d.node.style.transform='';d.node.classList.remove('is-grabbed');showMini(d.kind==='flask'?'flask':'sample');return;}
+   if(!d.moved){d.node.style.transform='';d.node.classList.remove('is-grabbed');selectItem(d.node);return;}
    finishDrag(d,locateSite(pointForDrag(d)));
   }
   function keyDown(event){
+   if(selected&&event.target.closest('[data-site]')&&['Enter',' '].includes(event.key)){event.preventDefault();tapSite(event.target.closest('[data-site]'));return;}
    if(event.key==='Escape'&&world.querySelector('.l10-mini')){world.querySelector('.l10-mini').remove();event.preventDefault();return;}
    const n=event.target.closest('[data-mechanism]');
    if(n){const key=event.key;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End','Escape',' ','Enter'].includes(key))return;event.preventDefault();if(n.dataset.mechanism==='valve'){setValve(['Home','Escape'].includes(key)?0:key==='End'?100:['ArrowUp','ArrowRight'].includes(key)?opening+5:['ArrowDown','ArrowLeft'].includes(key)?opening-5:opening?0:8);}else setLid(['Home','ArrowDown','ArrowLeft'].includes(key)?0:['End','ArrowUp','ArrowRight'].includes(key)?1:ref.lid>.5?0:1,true);return;}
@@ -267,7 +332,7 @@
    const content={titre:['Бюретка','Дозирует раствор при исследовании кислотности.',`${fmt(s.volume/10)} мл · кран ${opening?'открыт':'закрыт'}`,'Поверни рукоятку. Меньшее открытие — более медленная подача.','Расход — часть исследования кислотности. Это не pH; методику и расчёт задаёт специалист.'],flask:['Колба','В ней перемешивают порцию и наблюдают окраску.',s.mixed?'Раствор перемешан':'Нужно перемешивание','Захвати и плавно покачай в разные стороны.','Локальная окраска от капли может исчезнуть. Наблюдение оценивают после перемешивания.'],brix:['Рефрактометр','Помогает оценить содержание растворённых веществ.',ref.measuring?'Измеряет':s.read||s.repeatStage>=3?'Показание 9,2 °Bx':ref.clean?'Ячейка подготовлена':'Нужна подготовка','Подготовь поверхность, нанеси материал, закрой крышку, измерь.','°Bx читается «градусы Брикс». Для сложного напитка это не точное содержание только сахара.'],sample:['Проба '+D.sample,'Партия '+D.batch+' · источник '+D.tank,s.registered?'Зарегистрирована':'Ожидает регистрации','Нужны титрование и рефрактометрия.','Номер связывает результаты с конкретной пробой. Лаборант сохраняет точные данные, в том числе необычные.']}[kind]||null;
    if(!content)return;world.querySelector('.l10-mini')?.remove();
    const menu=document.createElement('aside');menu.className='l10-mini';menu.setAttribute('aria-label','Сведения о предмете');menu.innerHTML=btn('mini-close',icon('close'),'l10-close','',false,'aria-label="Закрыть мини-меню"')+`<h3>${content[0]}</h3><p>${content[1]}</p><p><b>${content[2]}</b></p><small>${content[3]}</small>${btn('mini-more','Подробнее','l10-text')}<p class="l10-more" hidden>${content[4]}</p>`;
-   const task=world.querySelector('.l10-task');task.insertAdjacentElement('afterend',menu);menu.style.top=(task.offsetTop+task.offsetHeight+15)+'px';
+   const task=world.querySelector('.l10-task');task.append(menu);
   }
   const details={
    titre:['Бюретка и колба','Титрование — исследование с дозированным добавлением раствора. Бюретка позволяет отсчитать расход титранта, а колба — перемешать пробу и наблюдать окраску.','В этой модели расход 3,4 мл — часть исследования кислотности. Это не pH и не готовый расчёт кислотности. Методика, реактивы и расчёт определяются специалистом.'],
@@ -303,6 +368,7 @@
   }
   function dispatch(type,value){
    setValve(0);
+   gestureProgress={};
    const oldPhase=s.phase,r=M.transition(s,type,value);s=r.state;note=r.bad?r.note:['record','stable','observe','mix'].includes(r.motion)?'':r.note;bad=r.bad;
    if(type==='method'){picking=false;closeView=false;if(value==='brix'&&ref.context!=='first')ref=I.refState(s,false);}
    if(oldPhase!==s.phase){hint=false;closeView=false;if(s.phase===4&&oldPhase!==4)ref=I.refState(s,true);}
@@ -313,6 +379,13 @@
   }
   function act(type,value){
    if(!type.startsWith('l10-'))return;type=type.slice(4);
+   if(type==='source-check'){if(value!==D.tank){announce('На этикетке другой источник. Сравни цифры ещё раз; направление ждёт пробу из T-07.',true);return;}dispatch('inspect','source');note='Источник T-07 на бутылке совпадает с направлением.';paint();live.textContent=note;return;}
+   if(type==='assist-mix'){if(s.phase===1&&s.prep===1)dispatch('prepare');else if(s.phase===2&&s.method==='titre'&&s.rig&&!opening&&!s.mixed)dispatch('mix');return;}
+   if(type==='stop-flow'){setValve(0);paint();return;}
+   if(type==='single-drop'){if(!opening&&s.rig&&s.mixed&&s.volume<=D.titre)dispatch('dose',1);return;}
+   if(type==='bulk-dose'){if(!opening&&s.rig&&s.mixed&&s.volume<=20)dispatch('dose',10);return;}
+   if(type==='lid-open'){setLid(1,true);return;}
+   if(type==='lid-close'){setLid(0,true);return;}
    if(type==='detail'){setValve(0);showMini(value);return;}
    if(type==='mini-close'){world.querySelector('.l10-mini')?.remove();return;}
    if(type==='mini-more'){const p=world.querySelector('.l10-more');if(p)p.hidden=!p.hidden;return;}
@@ -330,7 +403,7 @@
    }
    if(type==='continue'){dispatch(s.titreSaved&&s.brixSaved?'to-results':'method',s.titreSaved?'brix':'titre');return;}
    if(type==='inspect'){dispatch(type,value);note=value==='seal'?'Крышка целая. Проба открыта для подготовки.':value==='label'?'На этикетке: L-041, партия P-214, источник T-07.':'Источник T-07 совпал с этикеткой.';paint();live.textContent=note;return;}
-   if(type==='answer'){if(value==='all'){quiz=true;bad=false;note='';save();}else{bad=true;note=value==='repeat'?'Исходное показание тоже нужно: повтор дополняет его. Попробуй ещё раз.':'Подменять число нельзя. Передай реальные результаты и отклонение. Попробуй ещё раз.';}paint();live.textContent=note;return;}
+   if(type==='answer'){if(value==='all'){quiz=true;bad=false;note='';save();}else{bad=true;note=value==='repeat'?'Повтор в диапазоне не отменяет первое наблюдение. Передай обе записи.':'Первое отклонение важно, но повтор тоже нужен: сохрани полную картину.';}paint();live.textContent=note;return;}
    if(['dose','mix','prepare','portion','rig','clean','load','cover','control','stable','repeat-clean','repeat-load','repeat-cover'].includes(type))return;
    dispatch(type,value);
   }
@@ -338,7 +411,7 @@
    a.content.innerHTML=`<div class="l10-app"><header class="l10-top"><a href="#map" class="l10-map" aria-label="На карту завода">${icon('back')}<span>Карта завода</span></a><img src="assets/ochakovo-logo.png" alt="Очаково. Натуральные напитки" width="166" height="40"><h1>Лаборатория</h1><nav aria-label="Инструменты лаборатории">${btn('route',icon('route')+'<span>Маршрут</span>','l10-utility','',false,'aria-label="Маршрут пробы"')}${btn('journal',icon('book')+'<span>Журнал</span>','l10-utility','',false,'aria-label="Лабораторный журнал"')}${btn('film',icon('play'),'l10-utility','',false,'aria-label="Ролик компании"')}${btn('motion',icon(window.GameMotion?.enabled()===false?'play':'pause'),'l10-utility','',false,'aria-label="Переключить анимации"')}</nav></header><div class="l10-world"></div><dialog class="l10-dialog"></dialog></div>`;
    world=a.content.querySelector('.l10-world');dialog=a.content.querySelector('dialog');
    dialog.addEventListener('close',()=>{dialog.querySelector('video')?.pause();lastTrigger?.isConnected&&lastTrigger.focus({preventScroll:true});});
-   world.addEventListener('pointerdown',pointerDown);world.addEventListener('pointermove',pointerMove);world.addEventListener('pointerup',pointerUp);world.addEventListener('pointercancel',()=>{if(drag?.node){drag.node.style.transform='';drag.node.classList.remove('is-grabbed');}drag=null;keyboardGrab=false;setValve(0);});world.addEventListener('keydown',keyDown);world.addEventListener('submit',e=>e.preventDefault());world.addEventListener('click',e=>{if(e.target.closest('[data-do],[data-grab],[data-mechanism]'))return;const n=e.target.closest('[data-info]');if(n)showMini(n.dataset.info);});
+   world.addEventListener('pointerdown',pointerDown);world.addEventListener('pointermove',pointerMove);world.addEventListener('pointerup',pointerUp);world.addEventListener('pointercancel',()=>{if(drag?.node){drag.node.style.transform='';drag.node.classList.remove('is-grabbed');}drag=null;keyboardGrab=false;setValve(0);});world.addEventListener('keydown',keyDown);world.addEventListener('submit',e=>e.preventDefault());world.addEventListener('click',e=>{const site=e.target.closest('[data-site]');if(selected&&site){tapSite(site);return;}if(e.target.closest('[data-do],[data-grab],[data-mechanism]'))return;const n=e.target.closest('[data-info]');if(n)showMini(n.dataset.info);});
   }
   const motionChange=e=>{const b=a.content.querySelector('[data-do="l10-motion"]');if(b){b.innerHTML=icon(e.detail.enabled?'pause':'play');b.setAttribute('aria-pressed',String(e.detail.enabled));}};
   document.addEventListener('ochakovo:motion',motionChange);
@@ -348,4 +421,3 @@
   return {managesFocus:true,start(){save();shell();paint();},act,done:()=>s.done&&quiz,result:()=>({learned:window.OchakovoShift.roles.lab.learned}),cleanup(){stopOperations();disposed=true;dialog?.querySelector('video')?.pause();document.removeEventListener('ochakovo:motion',motionChange);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pageHide);}};
  });
 })();
-

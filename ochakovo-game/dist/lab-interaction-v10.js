@@ -7,8 +7,8 @@
   const quantity=carry+flowRate(opening)*clamp(seconds,0,.1),drops=Math.floor(quantity+1e-8);
   return {volume:Math.min(50,volume+drops),carry:quantity-drops,drops};
  }
- function gesture(){
-  let distance=0,turns=0,last=null;
+ function gesture(previous={}){
+  let distance=Number(previous?.distance)||0,turns=Number(previous?.turns)||0,last=null;
   return {move(dx,dy){const length=Math.hypot(dx,dy);if(length<3)return this.progress();distance+=length;if(last&&(dx*last.x+dy*last.y)/(length*last.length)<.25)turns++;last={x:dx,y:dy,length};return this.progress();},progress(){return {distance,turns,ready:distance>=150&&turns>=2,amount:Math.min(1,distance/150,turns/2)};}};
  }
  const refState=(s,repeat)=>({context:repeat?'repeat':'first',lid:repeat?(s.repeatStage===0||s.repeatCover?0:1):(s.cover||s.control&&!s.clean?0:1),well:repeat?(s.repeatStage===0?'residue':s.repeatStage>=2?'sample':''):(s.loaded?'sample':s.control&&!s.clean?'control':''),clean:repeat?s.repeatStage>=1:s.clean,pipette:'',measuring:false});
