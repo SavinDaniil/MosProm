@@ -3,9 +3,9 @@
 
   var active = null;
   var ASSETS = {
-    welcome: 'assets/mascot.png',
-    think: 'assets/mascot-think.png',
-    success: 'assets/mascot-success.png'
+    welcome: 'assets/ochazhok-illustrated-v2.webp',
+    think: 'assets/ochazhok-illustrated-v2.webp',
+    success: 'assets/ochazhok-illustrated-v2.webp'
   };
   var DEFAULT_TIP = 'Посмотри, что нужно получить в конце задания, и начни с одного действия. Здесь можно пробовать снова.';
   var DEFAULT_TEXT = 'Я рядом. Исследуй завод в своём темпе, а если понадобится — подскажу.';
@@ -30,15 +30,15 @@
       motionOverride: null
     };
     active = state;
-    host.innerHTML = '<section class="companion-card" aria-label="Капля — твой напарник">' +
+    host.innerHTML = '<section class="companion-card" aria-label="Очажок">' +
       '<header class="companion-header">' +
-        '<img class="companion-mini" src="assets/mascot.png" alt="" width="42" height="50">' +
-        '<div class="companion-heading"><span>Твой напарник</span><strong>Капля рядом</strong></div>' +
+        '<img class="companion-mini" src="assets/ochazhok-illustrated-v2.webp" alt="" width="42" height="50">' +
+        '<div class="companion-heading"><strong>Очажок рядом</strong></div>' +
         '<button class="companion-toggle" type="button" aria-expanded="true" aria-label="Свернуть напарника" title="Свернуть напарника"><span class="companion-toggle-label">Развернуть</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button>' +
       '</header>' +
       '<div class="companion-content">' +
         '<div class="companion-bubble"><span class="companion-scene">На заводе</span><p class="companion-speech" role="status" aria-live="polite" aria-atomic="true"></p></div>' +
-        '<div class="companion-stage"><button class="companion-character" type="button" aria-label="Поговорить с Каплей" title="Поговорить с Каплей"><span class="companion-gesture"><span class="companion-breath"><img class="companion-image" src="assets/mascot.png" alt="Капля приветствует тебя" width="220" height="300" draggable="false"></span></span></button><span class="companion-floor" aria-hidden="true"></span></div>' +
+        '<div class="companion-stage"><button class="companion-character" type="button" aria-label="Поговорить с Очажком" title="Поговорить с Очажком"><span class="companion-gesture"><span class="companion-breath"><img class="companion-image" src="assets/ochazhok-illustrated-v2.webp" alt="Очажок приветствует тебя" width="220" height="300" draggable="false"></span></span></button><span class="companion-floor" aria-hidden="true"></span></div>' +
         '<div class="companion-actions"><button class="companion-hint" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 18h6m-5 3h4M8.5 14.5a6 6 0 1 1 7 0c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z"/></svg>Подскажи</button><span class="companion-action-note">Можно пробовать снова</span></div>' +
       '</div></section>';
 
@@ -185,7 +185,7 @@
     if (typeof reaction.text === 'string' && reaction.text.trim()) state.speech.textContent = reaction.text;
     var imageUrl = new URL(ASSETS[mood], document.baseURI).href;
     if (state.image.src !== imageUrl) state.image.src = imageUrl;
-    state.image.alt = mood === 'success' ? 'Капля радуется твоему успеху' : mood === 'think' ? 'Капля задумался и помогает разобраться' : 'Капля приветствует тебя';
+    state.image.alt = mood === 'success' ? 'Очажок радуется твоему успеху' : mood === 'think' ? 'Очажок задумался и помогает разобраться' : 'Очажок приветствует тебя';
     animateReaction(state, mood);
   }
 

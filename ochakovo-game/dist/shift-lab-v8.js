@@ -32,7 +32,7 @@
    const text=hint?help[s.phase]:note||copy;
    return `<section class="l8-task ${bad?'has-error':''}"><h2 class="l8-task-title" tabindex="-1"><span>${bad?'Проверь':top}</span><strong>${bad?'ЕЩЁ РАЗ':bottom}</strong></h2><p>${bad?icon('alert'):''}${esc(text)}</p></section>`;
   }
-  function companion(){return btn('hint',`<img src="assets/${bad?'mascot-think.png':s.done||s.observed||note&&!bad?'mascot-success.png':'mascot-think.png'}" width="150" height="195" alt="Капля">`,'l8-companion','',false,`aria-label="Подсказка Капли" aria-expanded="${hint}"`);}
+  function companion(){return btn('hint',`<img src="assets/${bad?'mascot-think.png':s.done||s.observed||note&&!bad?'mascot-success.png':'mascot-think.png'}" width="150" height="195" alt="Очажок">`,'l8-companion','',false,`aria-label="Подсказка Очажка" aria-expanded="${hint}"`);}
   const footer=()=>`<img class="l8-pattern" src="assets/lab-brand-pattern.jpg" width="1754" height="1240" alt=""><div class="l8-scene-foot">${btn('about','Учебная модель','l8-foot-link')}<span>${storageOK?'Сохраняется на устройстве':'Сохранение недоступно'}</span></div>`;
   function journalRows(){return `<div><dt>Титрование · расход</dt><dd>${s.titreSaved?'3,4 <small>мл</small>':'ещё не записано'}</dd></div><div><dt>Рефрактометр · исходный</dt><dd>${s.brixSaved?'9,2 <small>°Bx</small>':'ещё не записано'}</dd></div>${s.repeatStage===4?'<div><dt>Рефрактометр · повтор</dt><dd>9,2 <small>°Bx</small></dd></div>':''}`;}
   function paperHeading(title){return `<header><span>ЛАБОРАТОРИЯ · ОЧАКОВО</span><h2>${title}</h2><p>Проба ${D.sample} · партия ${D.batch} · ${D.tank}</p></header>`;}
@@ -67,7 +67,7 @@
    else if(s.observed)controls=`<div class="l8-observe-actions">${stamp('save-titre','Записать 3,4 мл')}</div>`;
    else if(zoom)controls=`<div class="l8-observe-actions" role="group" aria-label="Наблюдение окраски">${btn('observe','<i class="l8-colour is-clear"></i>Исчезла','l8-observation','fades',false,'data-next')}${btn('observe','<i class="l8-colour is-pink"></i>Сохранилась','l8-observation','persists')}${btn('unzoom','Вернуться к бюретке','l8-small')}</div>`;
    else if(!s.mixed)controls=target('mix','Перемешать колбу','l8-mix-target','','data-next');
-   else controls=`${btn('dose',`<span class="l8-valve-ring"></span><span class="l8-valve-label">${s.volume>=30?'Капля · 0,1 мл':'Открыть кран · 1 мл'}</span>`,'l8-valve',s.volume>=30?1:10,false,'data-next aria-label="'+(s.volume>=30?'Добавить 0,1 мл':'Добавить 1 мл')+'"')}<div class="l8-dose-choice">${btn('dose','1 мл','',10)}${btn('dose',icon('drop')+'0,1 мл','',1)}</div>${s.volume>0?target('look','Рассмотреть раствор','l8-look-target'):''}`;
+   else controls=`${btn('dose',`<span class="l8-valve-ring"></span><span class="l8-valve-label">${s.volume>=30?'Очажок · 0,1 мл':'Открыть кран · 1 мл'}</span>`,'l8-valve',s.volume>=30?1:10,false,'data-next aria-label="'+(s.volume>=30?'Добавить 0,1 мл':'Добавить 1 мл')+'"')}<div class="l8-dose-choice">${btn('dose','1 мл','',10)}${btn('dose',icon('drop')+'0,1 мл','',1)}</div>${s.volume>0?target('look','Рассмотреть раствор','l8-look-target'):''}`;
    return task(top,bottom,copy)+`<div class="l8-props l8-titration ${zoom?'is-zoomed':''}"><div class="l8-rig-canvas">${rigArt()}${!zoom?`<div class="l8-burette-note"><span>Расход титранта</span><strong>${fmt(s.volume/10)} <small>мл</small></strong><small>Начало: 0,0 мл · порция A</small></div>`:''}${controls}</div>${btn('choose-method','Другой метод','l8-switch-method')}</div>`;
   }
   function refAction(repeat){

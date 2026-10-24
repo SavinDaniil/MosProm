@@ -1,6 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {create,totalNeed,unitNeed} = require('../dist/warehouse-model.js');
+const vm = require('node:vm'), fs = require('node:fs'), path = require('node:path');
+const sandbox = {module:{exports:{}}};
+vm.compileFunction(fs.readFileSync(path.join(__dirname,'../dist/warehouse-model.js'),'utf8'),['module'])(sandbox.module);
+const {create,totalNeed,unitNeed} = sandbox.module.exports;
 function reviewed(g,id){assert.equal(g.scan(id),true);assert.equal(g.inspect(id,'good'),true);assert.equal(g.add(id),true);}
 function resolve(g){assert.equal(g.inspect('FA-03','damage'),true);g.reason('tear');assert.equal(g.report(),true);assert.equal(g.quarantine(),true);}
 function complete(){const g=create();g.start();for(const id of ['CB-01','CB-02','CC-01','FA-01','FA-02'])reviewed(g,id);resolve(g);reviewed(g,'FA-04');return g;}
