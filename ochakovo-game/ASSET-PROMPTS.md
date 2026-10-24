@@ -1,0 +1,16 @@
+# Image assets
+
+Mode: built-in `image_gen.imagegen`. Original reference: user-supplied golden bubbly mascot image. Final images copied into `dist/assets/`, originals retained. No generated UI mockup is substituted for working controls.
+
+## mascot.png — transparent
+
+Use case: stylized-concept. Asset: single full-body mascot cutout for a calm polished career exploration browser game for Russian beverage company Очаково. Use the attached image ONLY as character identity reference: friendly anthropomorphic bubbly golden amber droplet, big expressive eyes, warm cheerful smile, short proportions, sneakers, clipboard. Generate ONE character, front three-quarter view, waving with one hand and holding a simple clipboard in the other. Adapt clothing to actual company brand: rich carmine red #D50032 cap, matching neat red work jacket with white trim, white t-shirt, charcoal trousers and red-and-white sneakers. Gold body with tiny translucent bubbles, refined soft 3D mobile game art, appealing to young adults rather than baby toy. On the cap simple tiny white company word «ОЧАКОВО» if legible; no other text, no extra logos. Keep entire character including feet comfortably inside image. Isolated genuinely transparent background, no scene, no cast floor or square panel. Soft studio light, high quality carefully designed character.
+
+## factory-map.png — opaque
+
+Use case: stylized-concept. Asset: landscape game map illustration, no UI and NO text, for a premium calm browser game about a first shift at a Russian beverage factory. Wide landscape composition 3:2. A beautifully crafted cozy isometric miniature factory campus on warm ivory #F5F1E8 background, an island with no horizon, refined soft 3D clay diorama with tactile matte surfaces, contemporary high-end casual game art. Five distinct areas connected by a winding pale concrete footpath: lower left welcoming entrance/museum with red roof and small landscaped garden, upper left white laboratory building with tall windows and a stylized external glass flask display, upper center large light grey stainless beverage production tanks and silos, upper right red and white bottling hall with a cutaway glimpse of a conveyor, lower right warehouse with cardboard cases and small red delivery van. Buildings occupy central 85% of the composition with breathing room around the island. Distinct paths and entrances visibly connect stations. Use actual company palette carmine red #D50032 roofs/doorways, clean white walls, warm grey metal, muted sage trees, tiny golden beverage accents. Sunshine from upper left, soft ambient occlusion and gentle offset shadows, no fake haze, no gradient backdrop. Intricate real architectural details: pipes, vents, railings, stacked palettes, red doors, painted lane markings. No people, no mascots, no bottle brand marks, no writing, no labels, no numbers, no buttons, no signs containing text, no border. Harmonious landscape single scene with front and center unobstructed paths for HTML game markers overlaid later.
+
+## Other assets
+
+- `ochakovo-logo.png`: original `031_OCHAKOVO_logoblock_rus_friz03.png` supplied in the brandbook archive. Unmodified.
+- `manrope.ttf`: https://raw.githubusercontent.com/google/fonts/main/ofl/manrope/Manrope%5Bwght%5D.ttf . Unmodified, local file. OFL metadata retained and accompanying license saved.

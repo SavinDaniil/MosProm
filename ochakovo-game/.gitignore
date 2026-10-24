@@ -1,0 +1,7 @@
+work/
+*.tar.gz
+*.zip
+node_modules/
+.DS_Store
+DESIGN.md
+.impeccable/

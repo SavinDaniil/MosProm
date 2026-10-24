@@ -1,0 +1,9 @@
+# Иллюстрация мини-истории
+
+Режим: встроенный ImageGen. Итоговый актив: `dist/assets/history-expedition-v4.png`.
+
+Это художественная собирательная иллюстрация. Люди и деревня не представлены как конкретные исторические участники или место экспедиции. Подпись в игре прямо обозначает иллюстрацию.
+
+## Точное задание
+
++Use-case: illustration-story / historical-scene. Create one premium narrative illustration for an interactive short history of the Russian beverage company Ochakovo. Landscape composition 3:2. Warm tactile miniature 3D editorial illustration, extremely well crafted detailed diorama, ivory/cream paper-like ground, natural golden grain and weathered wood, restrained crimson red accents #D50032 matching Ochakovo, soft cinematic late afternoon light. Scene: an anonymous Russian rural village during a beverage recipe-collecting expedition in the 1990s. Foreground right a modest wooden kitchen table with ceramic kvass jug, rye bread, grains, open blank field notebook and pencil. Two anonymous adult researchers in simple cream jackets with subtle crimson accents listen to an older rural resident at the table, friendly understated small-scale figures, no exaggerated faces, no mascot. Background wooden village houses, birch trees and a field, a small neutral period-appropriate cream van parked near a dirt lane. Tell the feeling of discovering and preserving recipes through conversations. This is an explicitly illustrative composite, not a reconstruction of a named historical person or village, no fabricated readable notes. Keep the left quarter relatively quiet for short UI text overlays, people and key objects centered/right, edge-to-edge cohesive landscape scene, not a collage, not a UI, no borders, no typography, no logos, no watermark, no alcohol bottles, no modern smartphones. Match high-end crafted toy-factory diorama aesthetics with sophisticated natural materials, avoid simplistic cartoon clipart.
