@@ -218,3 +218,6 @@ body:has(.lab-v10) .mission-layout{display:block;margin:0;max-width:none}
 }
 @media(prefers-reduced-motion:reduce){.lab-v10 *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.l10-rig.is-flowing .l10-stream{background:#eed8bb80;border-radius:6px}}
 body[data-motion=off] .lab-v10 .l10-stream>i{animation:none}body[data-motion=off] .lab-v10 .l10-rig.is-flowing .l10-stream{background:#eed8bb80}
+@media(min-width:901px){.l10-feedback{left:28px;right:auto;width:290px;bottom:190px;pointer-events:none}}
+@media(min-width:1700px){.l10-feedback{left:40px;width:320px}}
+@media(min-width:901px) and (max-width:1180px){.l10-feedback{left:20px;width:250px}}

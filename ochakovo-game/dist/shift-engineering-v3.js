@@ -5,7 +5,7 @@
  const M=window.OchakovoEngineeringShift,KEY='ochakovo-engineering-shift-v3';
  const phases=['Первый день','Подготовка','Обычная работа','Поручения','Рабочая ситуация','Передача смены'];
  const coaching=[
-  'Я инженер-наставник. Мы следим за согласованной работой датчиков, программы и механизмов. Начни со знакомства с тремя узлами линии.',
+  'Ты — стажёр по автоматизации, я — твой наставник. Мы следим за согласованной работой датчиков, программы и механизмов. Начни с трёх узлов линии.',
   'Перед наблюдением сверим учебное задание, предыдущую запись и внешнее состояние. Пуск и готовность оборудования подтверждают сотрудники.',
   'Теперь обычная работа: наблюдай срабатывание, зарегистрированный счёт и выпуск группы. Прикрепи по одному моменту из каждого узла.',
   'В смене есть и плановые поручения: записать осмотр, сравнить дорожки сигналов и передать контрольное наблюдение оператору.',
@@ -66,7 +66,7 @@
     if(id==='mentor'&&s.incident.proposed&&!s.incident.serviced)html+=`<p>«Подготовим условия и обслужим наружное окно по документации. Ты наблюдаешь; положение и настройки сохраняем».</p>${btn('model','Наблюдать работу специалиста','observe-service','e3-primary')}`;
     if(id==='controller'&&s.incident.serviced){const v=s.incident.verification;html+=`<p>${v===0?'Проверим полный проход шести бутылок.':v===1?'Между группами проверим отсутствие ложных событий.':v===2?'Теперь повторим полный проход в прежних условиях.':'Оба прохода 6/6, промежуток без событий. Группы выпущены.'}</p>`;if(v<3){if(v!==1&&!trial)html+=btn('trial','Открыть контрольный прогон','','e3-primary');else html+=controls()+btn('verify',v===1?'Зафиксировать ноль событий':v===0?'Сохранить полный проход A':'Сохранить полный проход B','','e3-primary');}}
    }
-   if(id==='journal'&&s.phase!==1){const entries=M.record(s);html+=`<div class="e3-record">${entries.filter(x=>x.text&&!/ещё|пока/i.test(x.text)).slice(s.phase===5?-5:0,s.phase===5?undefined:4).map(x=>`<p><strong>${esc(x.title)}</strong>${esc(x.text)}</p>`).join('')}</div>`;if(s.phase===5)html+=s.done?`<p class="e3-menu-note">Смена передана. Оператор принял результаты, наставник подтвердил проверку.</p>`:btn('model','Передать результаты смены','handoff','e3-primary');}
+   if(id==='journal'&&s.phase!==1){const entries=M.record(s),entry=x=>`<p><strong>${esc(x.title)}</strong>${esc(x.text)}</p>`;html+=`<div class="e3-record">${entries.slice(0,4).filter(x=>x.text&&!/ещё|пока/i.test(x.text)).map(entry).join('')}${s.phase===5?`<details><summary>Ситуация и проверка результата</summary>${entries.slice(4,7).map(entry).join('')}</details>`:''}</div>`;if(s.phase===5)html+=s.done?`<p class="e3-menu-note">Смена передана. Оператор принял результаты, наставник подтвердил проверку.</p>${btn('restart','Новая учебная смена')}`:btn('model','Передать результаты смены','handoff','e3-primary');}
    if(id==='mentor'&&!((s.phase===4)&&s.incident.proposed&&!s.incident.serviced))html+=`<p>${coaching[s.phase]}</p><details><summary>О профессии и полномочиях</summary><p>В этой игре ты — стажёр инженерного направления по автоматизации. Наблюдаешь, сопоставляешь сигналы и ведёшь записи рядом с наставником. Сотрудники выполняют обслуживание, подтверждают готовность и управляют пуском. Это учебная модель, не должностная инструкция конкретного завода.</p></details>`;
    return html;
   }
@@ -112,7 +112,7 @@
    if(type==='trial'){trial=true;moment=0;paused=window.GameMotion?.enabled()===false;render();return;}
    if(type==='verify'){const c=context();execute('observe-verification','',c);if(!bad){trial=false;moment=0;render();}return;}
    if(type==='next'){if(s.phase===5){open('journal');return;}return execute('next');}
-   if(type==='hint'){const hints=[['sensor','controller','group'].find(id=>!complete('visits',id)),!complete('prep','task')?'controller':!complete('prep','log')?'journal':'sensor',!complete('normal','sensor')?'sensor':!complete('normal','controller')?'controller':'group',!complete('routine','inspect')?'sensor':!complete('routine','signals')?'controller':'operator',!s.incident.recordOpen?'operator':!s.incident.inspected?'sensor':!s.incident.proposed?'sensor':!s.incident.serviced?'mentor':'controller','journal'];open(hints[s.phase]||'mentor');}
+   if(type==='hint'){const hints=[['sensor','controller','group'].find(id=>!complete('visits',id)),!complete('prep','task')?'controller':!complete('prep','log')?'journal':'sensor',!complete('normal','sensor')?'sensor':!complete('normal','controller')?'controller':'group',!complete('routine','inspect')?'sensor':!complete('routine','signals')?'controller':'operator',!s.incident.recordOpen?'operator':s.incident.marked.length<2?'controller':!s.incident.inspected?'sensor':!s.incident.proposed?'sensor':!s.incident.serviced?'mentor':'controller','journal'];open(hints[s.phase]||'mentor');}
   }
   function input(type,value){if(type==='e3-frame')execute('frame',Number(value));}
   const outside=e=>{if(menu&&!e.target.closest('.e3-menu,[data-do="e3-object"],[data-do="e3-camera"]')){menu='';a.content.querySelector('.e3-menu')?.remove();}};
