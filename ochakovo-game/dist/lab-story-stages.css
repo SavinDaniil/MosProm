@@ -258,3 +258,8 @@
  .ls .ls-scene.results{min-height:560px}.ls[data-step=report] .ls-scene,.ls[data-step=conclusion] .ls-scene{height:600px;min-height:600px}
  .ls .ls-scene.finish{height:620px;min-height:620px}
 }
+
+/* Keep the registration CTA above the overlapping direction sheet. */
+.ls .ls-registration{z-index:4}
+.ls .ls-registration .ls-primary{position:relative;z-index:5}
+
