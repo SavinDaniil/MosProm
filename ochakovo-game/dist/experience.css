@@ -17,6 +17,6 @@ body[data-motion='off'] *,body[data-tab-active='no'] *{animation-play-state:paus
 
 .map-artwork{position:relative;width:100%;aspect-ratio:1.5;isolation:isolate}
 .map-artwork>.map-art{display:block;width:100%;height:100%;left:0;aspect-ratio:auto;object-fit:cover}
-.map-building-shades{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:multiply}
-.map-building-shades polygon{fill:#172027;fill-opacity:.62}
+.map-building-shades{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:multiply;filter:blur(10px)}
+.map-building-shade{fill:#172027;color:#172027;opacity:.62}
 @media(max-width:680px){.map-artwork{width:150%;height:370px;left:-25%;aspect-ratio:auto}}
