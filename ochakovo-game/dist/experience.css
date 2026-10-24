@@ -9,3 +9,8 @@ body[data-motion='off'] *,body[data-tab-active='no'] *{animation-play-state:paus
 @media(prefers-reduced-motion:reduce){.history-experience *,.companion-card *{animation:none!important;transition:none!important}}
 
 .story-narrative-copy p,.profession-after p,.page-intro p{font-size:14px}.companion-speech{font-size:13px}
+
+/* Completed stages regain their normal brightness using the saved route state. */
+.map-pin:not(.completed){filter:brightness(.65) saturate(.35)}
+.station:not(.done){background:#e6e2dc;filter:brightness(.8) saturate(.35)}
+.station.done{background:white}
